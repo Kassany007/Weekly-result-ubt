@@ -7,37 +7,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f7f8fa;
-    --white: #ffffff;
-    --border: #e4e7ed;
-    --border2: #d0d5e0;
-    --text: #1a1d23;
-    --muted: #7b8299;
-    --light: #f0f2f7;
+    --bg: #f4f0eb;
+    --white: #fdfcfb;
+    --border: #e8e2d9;
+    --border2: #d9d1c6;
+    --text: #2c2825;
+    --muted: #8c8279;
+    --light: #ede8e1;
 
-    --release-bg: #eef6ff;
-    --release-border: #bfdbfe;
-    --release-accent: #2563eb;
-    --release-badge: #dbeafe;
-    --release-badge-text: #1d4ed8;
+    --release-bg: #eaf1fb;
+    --release-border: #c9ddf5;
+    --release-accent: #2f6cc4;
+    --release-tag-bg: #d6e8f9;
+    --release-tag: #1e5298;
 
-    --done-bg: #f0fdf4;
-    --done-border: #bbf7d0;
-    --done-accent: #16a34a;
-    --done-badge: #dcfce7;
-    --done-badge-text: #15803d;
+    --done-bg: #eaf5ee;
+    --done-border: #bfe0c9;
+    --done-accent: #2a9050;
+    --done-tag-bg: #d4eedd;
+    --done-tag: #1d6e3a;
 
-    --paused-bg: #fffbeb;
-    --paused-border: #fde68a;
-    --paused-accent: #d97706;
-    --paused-badge: #fef3c7;
-    --paused-badge-text: #b45309;
+    --paused-bg: #fdf6e8;
+    --paused-border: #f0dba8;
+    --paused-accent: #c47d10;
+    --paused-tag-bg: #faecc8;
+    --paused-tag: #9a600a;
 
-    --partial-bg: #faf5ff;
-    --partial-border: #e9d5ff;
-    --partial-accent: #7c3aed;
-    --partial-badge: #ede9fe;
-    --partial-badge-text: #6d28d9;
+    --partial-bg: #f2eefb;
+    --partial-border: #d9cef0;
+    --partial-accent: #6b44c4;
+    --partial-tag-bg: #e4d9f5;
+    --partial-tag: #512fa0;
 
     --radius: 14px;
     --radius-sm: 8px;
@@ -49,229 +49,234 @@
   .header {
     background: var(--white);
     border-bottom: 1px solid var(--border);
-    padding: 1.5rem 2.5rem;
+    padding: 1.25rem 2rem;
     display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
   }
-  .header-left h1 { font-family: 'Unbounded', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-  .header-left p { font-size: 13px; color: var(--muted); margin-top: 3px; }
-  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header h1 { font-family: 'Unbounded', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+  .header p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .live { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: blink 2s infinite; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #2a9050; animation: blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .btn-refresh {
-    background: var(--white); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    color: var(--muted); font-family: 'Onest', sans-serif; font-size: 12px; padding: 6px 14px;
-    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-  }
-  .btn-refresh:hover { border-color: #2563eb; color: #2563eb; }
 
-  /* METRICS */
-  .metrics {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 0; border-bottom: 1px solid var(--border);
-    background: var(--white);
+  .btn { background: var(--white); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--muted); font-family: 'Onest', sans-serif; font-size: 12px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+  .btn:hover { border-color: var(--release-accent); color: var(--release-accent); }
+
+  /* WEEK FILTER */
+  .week-bar {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   }
-  .metric {
-    padding: 1.1rem 1.5rem; border-right: 1px solid var(--border);
-    display: flex; align-items: center; gap: 12px;
+  .week-bar-label { font-size: 12px; color: var(--muted); }
+  .week-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .week-tab {
+    font-size: 12px; padding: 5px 14px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--light); color: var(--muted);
+    font-family: 'Onest', sans-serif; transition: all 0.18s;
   }
-  .metric:last-child { border-right: none; }
-  .metric-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-  .metric-text { }
-  .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
-  .metric-value { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; font-weight: 700; }
-  .mv-blue { color: var(--release-accent); }
-  .mv-green { color: var(--done-accent); }
-  .mv-amber { color: var(--paused-accent); }
-  .mv-purple { color: var(--partial-accent); }
+  .week-tab.active { background: var(--text); color: var(--white); border-color: var(--text); }
+  .week-tab:hover:not(.active) { border-color: var(--border2); color: var(--text); }
 
   /* TOOLBAR */
   .toolbar {
-    padding: 1rem 2.5rem; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    padding: 0.75rem 2rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
     background: var(--white); border-bottom: 1px solid var(--border);
   }
   .filter-label { font-size: 12px; color: var(--muted); }
   select {
     background: var(--light); border: 1px solid var(--border); border-radius: var(--radius-sm);
-    color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; padding: 6px 28px 6px 10px;
+    color: var(--text); font-family: 'Onest', sans-serif; font-size: 12px; padding: 5px 26px 5px 9px;
     outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237b8299' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%238c8279' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: right 8px center;
   }
-  select:focus { border-color: #2563eb; }
+  select:focus { border-color: var(--release-accent); }
   .search-wrap {
-    margin-left: auto; display: flex; align-items: center; gap: 8px;
-    background: var(--light); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px;
+    margin-left: auto; display: flex; align-items: center; gap: 7px;
+    background: var(--light); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 10px;
   }
-  .search-wrap svg { opacity: 0.4; flex-shrink: 0; }
-  .search-wrap input { background: none; border: none; color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; outline: none; width: 170px; }
+  .search-wrap svg { opacity: 0.35; flex-shrink: 0; }
+  .search-wrap input { background: none; border: none; color: var(--text); font-family: 'Onest', sans-serif; font-size: 12px; outline: none; width: 160px; }
   .search-wrap input::placeholder { color: var(--muted); }
 
-  /* CONTENT */
-  .content { padding: 1.5rem 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+  /* METRICS ROW */
+  .metrics { display: grid; grid-template-columns: repeat(4,1fr); background: var(--white); border-bottom: 1px solid var(--border); }
+  .metric { padding: 0.9rem 1.25rem; border-right: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .metric:last-child { border-right: none; }
+  .metric-icon { font-size: 20px; }
+  .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1px; }
+  .metric-value { font-family: 'Unbounded', sans-serif; font-size: 1.3rem; font-weight: 700; }
+  .mv-blue { color: var(--release-accent); }
+  .mv-green { color: var(--done-accent); }
+  .mv-amber { color: var(--paused-accent); }
+  .mv-purple { color: var(--partial-accent); }
 
-  /* SECTION */
-  .section { border-radius: var(--radius); border: 1.5px solid; overflow: hidden; }
-  .section-releases { background: var(--release-bg); border-color: var(--release-border); }
-  .section-done { background: var(--done-bg); border-color: var(--done-border); }
-  .section-paused { background: var(--paused-bg); border-color: var(--paused-border); }
-  .section-partial { background: var(--partial-bg); border-color: var(--partial-border); }
-
-  .section-header {
-    padding: 1rem 1.25rem; display: flex; align-items: center; gap: 10px;
-    cursor: pointer; user-select: none; border-bottom: 1px solid;
+  /* MAIN LAYOUT: 4 columns */
+  .columns-wrap {
+    padding: 1.25rem 2rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    align-items: start;
   }
-  .section-releases .section-header { border-color: var(--release-border); }
-  .section-done .section-header { border-color: var(--done-border); }
-  .section-paused .section-header { border-color: var(--paused-border); }
-  .section-partial .section-header { border-color: var(--partial-border); }
 
-  .section-icon { font-size: 20px; }
-  .section-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; flex: 1; }
-  .section-releases .section-title { color: var(--release-accent); }
-  .section-done .section-title { color: var(--done-accent); }
-  .section-paused .section-title { color: var(--paused-accent); }
-  .section-partial .section-title { color: var(--partial-accent); }
+  /* COLUMN / SECTION */
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .col-header {
+    background: var(--white); border-radius: var(--radius); padding: 0.9rem 1rem;
+    border-top: 3px solid; display: flex; align-items: center; gap: 8px;
+    border-left: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .col-releases .col-header { border-top-color: var(--release-accent); }
+  .col-done .col-header { border-top-color: var(--done-accent); }
+  .col-paused .col-header { border-top-color: var(--paused-accent); }
+  .col-partial .col-header { border-top-color: var(--partial-accent); }
 
-  .section-count { font-size: 12px; color: var(--muted); background: rgba(255,255,255,0.7); border-radius: 20px; padding: 2px 10px; }
-  .toggle-btn { font-size: 16px; color: var(--muted); transition: transform 0.2s; }
-  .section.collapsed .toggle-btn { transform: rotate(-90deg); }
-  .section.collapsed .section-body { display: none; }
-
-  .section-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 8px; }
+  .col-icon { font-size: 17px; }
+  .col-title { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; flex: 1; line-height: 1.3; }
+  .col-releases .col-title { color: var(--release-accent); }
+  .col-done .col-title { color: var(--done-accent); }
+  .col-paused .col-title { color: var(--paused-accent); }
+  .col-partial .col-title { color: var(--partial-accent); }
+  .col-count { font-size: 11px; color: var(--muted); background: var(--light); border-radius: 12px; padding: 1px 8px; }
 
   /* TASK CARD */
   .task-card {
-    background: var(--white); border-radius: var(--radius-sm); padding: 1rem 1.1rem;
-    border: 1px solid; display: flex; flex-direction: column; gap: 8px;
-    cursor: pointer; transition: box-shadow 0.15s, transform 0.15s;
+    background: var(--white); border-radius: var(--radius-sm);
+    border: 0.5px solid; padding: 0.85rem 0.9rem;
+    display: flex; flex-direction: column; gap: 7px;
+    cursor: pointer; transition: box-shadow 0.15s, transform 0.12s;
     animation: fadeUp 0.25s ease both;
   }
-  .section-releases .task-card { border-color: var(--release-border); }
-  .section-releases .task-card:hover { box-shadow: 0 2px 12px rgba(37,99,235,0.12); transform: translateY(-1px); }
-  .section-done .task-card { border-color: var(--done-border); }
-  .section-done .task-card:hover { box-shadow: 0 2px 12px rgba(22,163,74,0.12); transform: translateY(-1px); }
-  .section-paused .task-card { border-color: var(--paused-border); }
-  .section-paused .task-card:hover { box-shadow: 0 2px 12px rgba(217,119,6,0.12); transform: translateY(-1px); }
-  .section-partial .task-card { border-color: var(--partial-border); }
-  .section-partial .task-card:hover { box-shadow: 0 2px 12px rgba(124,58,237,0.12); transform: translateY(-1px); }
+  .col-releases .task-card { border-color: var(--release-border); }
+  .col-releases .task-card:hover { box-shadow: 0 3px 14px rgba(47,108,196,0.1); transform: translateY(-1px); }
+  .col-done .task-card { border-color: var(--done-border); }
+  .col-done .task-card:hover { box-shadow: 0 3px 14px rgba(42,144,80,0.1); transform: translateY(-1px); }
+  .col-paused .task-card { border-color: var(--paused-border); }
+  .col-paused .task-card:hover { box-shadow: 0 3px 14px rgba(196,125,16,0.1); transform: translateY(-1px); }
+  .col-partial .task-card { border-color: var(--partial-border); }
+  .col-partial .task-card:hover { box-shadow: 0 3px 14px rgba(107,68,196,0.1); transform: translateY(-1px); }
 
   @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-  .task-top { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
-  .task-dir { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
-  .section-releases .task-dir { background: var(--release-badge); color: var(--release-badge-text); }
-  .section-done .task-dir { background: var(--done-badge); color: var(--done-badge-text); }
-  .section-paused .task-dir { background: var(--paused-badge); color: var(--paused-badge-text); }
-  .section-partial .task-dir { background: var(--partial-badge); color: var(--partial-badge-text); }
+  .task-dir { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 12px; margin-bottom: 2px; }
+  .col-releases .task-dir { background: var(--release-tag-bg); color: var(--release-tag); }
+  .col-done .task-dir { background: var(--done-tag-bg); color: var(--done-tag); }
+  .col-paused .task-dir { background: var(--paused-tag-bg); color: var(--paused-tag); }
+  .col-partial .task-dir { background: var(--partial-tag-bg); color: var(--partial-tag); }
 
-  .task-epic { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; flex: 1; }
-  .task-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-  .meta-who { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
-  .avatar { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; flex-shrink: 0; font-family: 'Unbounded', sans-serif; }
-  .section-releases .avatar { background: var(--release-badge); color: var(--release-badge-text); }
-  .section-done .avatar { background: var(--done-badge); color: var(--done-badge-text); }
-  .section-paused .avatar { background: var(--paused-badge); color: var(--paused-badge-text); }
-  .section-partial .avatar { background: var(--partial-badge); color: var(--partial-badge-text); }
-
-  .meta-dates { font-size: 12px; color: var(--muted); }
-  .result-link { font-size: 12px; color: #2563eb; display: flex; align-items: center; gap: 4px; text-decoration: none; }
+  .task-epic { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .task-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .meta-who { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .avatar { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; flex-shrink: 0; font-family: 'Unbounded', sans-serif; }
+  .col-releases .avatar { background: var(--release-tag-bg); color: var(--release-tag); }
+  .col-done .avatar { background: var(--done-tag-bg); color: var(--done-tag); }
+  .col-paused .avatar { background: var(--paused-tag-bg); color: var(--paused-tag); }
+  .col-partial .avatar { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .meta-date { font-size: 11px; color: var(--muted); }
+  .result-link { font-size: 11px; color: var(--release-accent); display: flex; align-items: center; gap: 3px; text-decoration: none; }
   .result-link:hover { text-decoration: underline; }
 
-  .victory-block {
-    display: flex; gap: 8px; align-items: flex-start;
-    padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.55;
-  }
-  .section-releases .victory-block { background: var(--release-badge); color: var(--release-badge-text); }
-  .section-done .victory-block { background: var(--done-badge); color: var(--done-badge-text); }
-  .section-paused .victory-block { background: var(--paused-badge); color: var(--paused-badge-text); }
-  .section-partial .victory-block { background: var(--partial-badge); color: var(--partial-badge-text); }
+  .victory-block { font-size: 12px; line-height: 1.5; padding: 6px 8px; border-radius: 6px; display: flex; gap: 5px; }
+  .col-releases .victory-block { background: var(--release-tag-bg); color: var(--release-tag); }
+  .col-done .victory-block { background: var(--done-tag-bg); color: var(--done-tag); }
+  .col-paused .victory-block { background: var(--paused-tag-bg); color: var(--paused-tag); }
+  .col-partial .victory-block { background: var(--partial-tag-bg); color: var(--partial-tag); }
+
+  .empty-col { background: var(--white); border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center; font-size: 12px; color: var(--muted); font-style: italic; }
 
   /* COPY BOX */
   .copy-section {
-    margin: 0 2.5rem 2.5rem;
-    background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden;
+    margin: 0 2rem 2rem;
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   }
   .copy-header {
-    padding: 1rem 1.25rem; background: var(--light); border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 1.25rem; background: var(--light); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
   }
-  .copy-header h2 { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
-  .copy-header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .copy-header-left h2 { font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: var(--text); }
+  .copy-header-left p { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .btn-copy {
-    background: #2563eb; border: none; border-radius: var(--radius-sm);
-    color: #fff; font-family: 'Onest', sans-serif; font-size: 13px; font-weight: 500;
-    padding: 8px 18px; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: opacity 0.2s;
-    white-space: nowrap;
+    background: var(--text); border: none; border-radius: var(--radius-sm);
+    color: var(--white); font-family: 'Onest', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 7px 16px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; white-space: nowrap;
   }
-  .btn-copy:hover { opacity: 0.88; }
+  .btn-copy:hover { opacity: 0.82; }
   .btn-copy.copied { background: var(--done-accent); }
   .copy-text {
-    padding: 1.25rem; font-size: 13px; line-height: 1.8; color: var(--text);
-    white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow-y: auto;
-    font-family: 'Onest', sans-serif;
+    padding: 1.1rem 1.25rem; font-size: 13px; line-height: 1.9; color: var(--text);
+    white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto;
+    font-family: 'Onest', sans-serif; background: var(--white);
   }
 
-  /* EMPTY / LOADING */
+  /* STATES */
   .loading-screen, .error-screen {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 40vh; gap: 14px; color: var(--muted); text-align: center; padding: 2rem;
+    min-height: 40vh; gap: 12px; color: var(--muted); text-align: center; padding: 2rem;
   }
-  .spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .spinner { width: 28px; height: 28px; border: 2px solid var(--border2); border-top-color: var(--release-accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg)} }
-  .btn-retry { background: #2563eb; border: none; border-radius: var(--radius-sm); color: #fff; font-family: 'Onest', sans-serif; font-size: 13px; padding: 8px 20px; cursor: pointer; }
+  .btn-retry { background: var(--release-accent); border: none; border-radius: var(--radius-sm); color: #fff; font-family: 'Onest', sans-serif; font-size: 13px; padding: 8px 20px; cursor: pointer; }
 
   /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; padding: 2rem; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,40,37,0.35); z-index: 100; align-items: center; justify-content: center; padding: 2rem; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--white); border: 1px solid var(--border2); border-radius: var(--radius); padding: 1.75rem; max-width: 540px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-  .modal h2 { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; line-height: 1.45; margin-bottom: 1.25rem; padding-right: 2rem; color: var(--text); }
-  .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--light); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; padding: 4px 10px; font-size: 16px; }
+  .modal { background: var(--white); border: 1px solid var(--border2); border-radius: var(--radius); padding: 1.5rem; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
+  .modal h2 { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; line-height: 1.45; margin-bottom: 1rem; padding-right: 2rem; color: var(--text); }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--light); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; padding: 3px 9px; font-size: 15px; }
   .modal-close:hover { color: var(--text); }
-  .modal-field { margin-bottom: 1rem; }
-  .modal-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); display: block; margin-bottom: 5px; }
-  .modal-field p { font-size: 14px; line-height: 1.6; color: var(--text); }
-  .modal-field a { color: #2563eb; font-size: 13px; word-break: break-all; }
+  .modal-field { margin-bottom: 0.9rem; }
+  .modal-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); display: block; margin-bottom: 4px; }
+  .modal-field p { font-size: 13px; line-height: 1.6; color: var(--text); }
+  .modal-field a { color: var(--release-accent); font-size: 13px; word-break: break-all; }
 
-  .empty-section { padding: 1rem; font-size: 13px; color: var(--muted); font-style: italic; text-align: center; }
-
-  @media(max-width:640px) {
-    .header, .toolbar, .content, .copy-section { padding-left: 1rem; padding-right: 1rem; }
+  @media(max-width:900px) {
+    .columns-wrap { grid-template-columns: repeat(2,1fr); }
     .metrics { grid-template-columns: repeat(2,1fr); }
     .metric:nth-child(2) { border-right: none; }
+  }
+  @media(max-width:560px) {
+    .header, .week-bar, .toolbar, .columns-wrap, .copy-section { padding-left: 1rem; padding-right: 1rem; }
+    .columns-wrap { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2,1fr); }
     .copy-section { margin-left: 1rem; margin-right: 1rem; }
-    .search-wrap input { width: 120px; }
+    .search-wrap input { width: 110px; }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-left">
+  <div>
     <h1>📊 Еженедельные результаты</h1>
-    <p id="weekLabel">Загрузка данных...</p>
+    <p id="weekLabel">Загрузка...</p>
   </div>
   <div class="header-right">
     <div class="live"><div class="live-dot"></div><span id="lastUpdated">—</span></div>
-    <button class="btn-refresh" onclick="init()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+    <button class="btn" onclick="init()">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
       Обновить
     </button>
   </div>
 </div>
 
-<div id="metricsRow"></div>
+<div class="week-bar" id="weekBar" style="display:none;">
+  <span class="week-bar-label">Неделя:</span>
+  <div class="week-tabs" id="weekTabs"></div>
+</div>
+
 <div id="toolbarRow" style="display:none" class="toolbar">
   <span class="filter-label">Направление:</span>
   <select id="filterDir" onchange="applyFilters()"><option value="">Все</option></select>
   <span class="filter-label">Исполнитель:</span>
   <select id="filterWho" onchange="applyFilters()"><option value="">Все</option></select>
   <div class="search-wrap">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
   </div>
 </div>
 
+<div id="metricsRow"></div>
 <div id="app"></div>
 <div id="copySection"></div>
 
@@ -286,21 +291,23 @@
 const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?output=csv';
 
 let allData = [];
+let weeks = [];
+let selectedWeek = 'all';
 
 const SECTIONS = [
-  { key: 'releases',  cls: 'section-releases', icon: '🚀', title: 'Релизы',                          desc: 'Выпущенные продукты и обновления' },
-  { key: 'done',      cls: 'section-done',      icon: '✅', title: 'Выполненные задачи',              desc: 'Завершённые задачи за неделю' },
-  { key: 'paused',    cls: 'section-paused',    icon: '⏸️', title: 'Приостановленные задачи',        desc: 'Задачи на паузе' },
-  { key: 'partial',   cls: 'section-partial',   icon: '🔄', title: 'Задачи с промежуточными результатами', desc: 'В процессе, есть прогресс' },
+  { key:'releases', cls:'col-releases', icon:'🚀', title:'Релизы' },
+  { key:'done',     cls:'col-done',     icon:'✅', title:'Выполненные задачи' },
+  { key:'paused',   cls:'col-paused',   icon:'⏸️', title:'Приостановленные' },
+  { key:'partial',  cls:'col-partial',  icon:'🔄', title:'Промежуточные результаты' },
 ];
 
 function categorize(d) {
-  const s = (d.status || '').toLowerCase();
-  const e = (d.epic || '').toLowerCase();
-  if (s.includes('релиз') || s.includes('release') || e.includes('релиз') || e.includes('release')) return 'releases';
-  if (s.includes('готов') || s.includes('выполн') || s.includes('done') || s.includes('завер') || s.includes('complete')) return 'done';
-  if (s.includes('пауз') || s.includes('приост') || s.includes('стоп') || s.includes('заморож') || s.includes('блок') || s.includes('block')) return 'paused';
-  if (s.includes('работ') || s.includes('прогресс') || s.includes('in progress') || s.includes('промеж') || s.includes('частичн')) return 'partial';
+  const s = (d.status||'').toLowerCase();
+  const e = (d.epic||'').toLowerCase();
+  if (s.includes('релиз')||s.includes('release')||e.includes('релиз')||e.includes('release')) return 'releases';
+  if (s.includes('пауз')||s.includes('приост')||s.includes('стоп')||s.includes('заморож')||s.includes('блок')||s.includes('block')) return 'paused';
+  if (s.includes('готов')||s.includes('выполн')||s.includes('done')||s.includes('завер')||s.includes('complete')) return 'done';
+  if (s.includes('работ')||s.includes('прогресс')||s.includes('in progress')||s.includes('промеж')||s.includes('частичн')) return 'partial';
   if (d.victory && d.victory.trim()) return 'partial';
   return 'done';
 }
@@ -310,8 +317,8 @@ function parseCSV(text) {
   const result = [];
   for (let i = 1; i < lines.length; i++) {
     const c = splitCSV(lines[i]);
-    if (c.every(x => !x.trim())) continue;
-    result.push({ direction: c[0]||'', epic: c[1]||'', who: c[2]||'', status: c[3]||'', dateStart: c[4]||'', dateEnd: c[5]||'', victory: c[6]||'', result: c[7]||'' });
+    if (c.every(x=>!x.trim())) continue;
+    result.push({ direction:c[0]||'', epic:c[1]||'', who:c[2]||'', status:c[3]||'', dateStart:c[4]||'', dateEnd:c[5]||'', victory:c[6]||'', result:c[7]||'' });
   }
   return result;
 }
@@ -332,33 +339,92 @@ function unique(arr){return[...new Set(arr.filter(Boolean))].sort();}
 function isLink(s){return s&&(s.startsWith('http://')||s.startsWith('https://'));}
 function initials(n){if(!n)return'?';return n.trim().split(/[\s,]+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
 
+function extractWeek(d) {
+  const raw = d.dateStart || d.dateEnd || '';
+  if (!raw) return null;
+  const parts = raw.split(/[.\-\/]/);
+  if (parts.length >= 2) {
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    const year = parts[2] ? parseInt(parts[2]) : new Date().getFullYear();
+    if (!isNaN(day) && !isNaN(month)) {
+      const date = new Date(year < 100 ? 2000+year : year, month-1, day);
+      const mon = new Date(date);
+      mon.setDate(date.getDate() - ((date.getDay()+6)%7));
+      return mon.toISOString().slice(0,10);
+    }
+  }
+  return null;
+}
+
+function weekLabel(iso) {
+  const d = new Date(iso);
+  const end = new Date(d); end.setDate(d.getDate()+6);
+  return d.toLocaleDateString('ru',{day:'numeric',month:'short'}) + ' – ' + end.toLocaleDateString('ru',{day:'numeric',month:'short'});
+}
+
 async function init() {
   document.getElementById('app').innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Загружаем данные...</p></div>`;
-  document.getElementById('metricsRow').innerHTML = '';
-  document.getElementById('copySection').innerHTML = '';
-  document.getElementById('toolbarRow').style.display = 'none';
+  document.getElementById('metricsRow').innerHTML='';
+  document.getElementById('copySection').innerHTML='';
+  document.getElementById('weekBar').style.display='none';
+  document.getElementById('toolbarRow').style.display='none';
   try {
     const res = await fetch(CSV_URL);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    if (!res.ok) throw new Error('HTTP '+res.status);
     const text = await res.text();
     allData = parseCSV(text);
     if (!allData.length) throw new Error('Таблица пустая');
+
+    // Extract weeks
+    const weekSet = new Set();
+    allData.forEach(d => { const w = extractWeek(d); if(w) weekSet.add(w); });
+    weeks = [...weekSet].sort().reverse();
+
+    buildWeekTabs();
     buildFilters();
     applyFilters();
-    document.getElementById('toolbarRow').style.display = 'flex';
-    document.getElementById('lastUpdated').textContent = 'Обновлено ' + new Date().toLocaleTimeString('ru');
-    const now = new Date();
-    document.getElementById('weekLabel').textContent = 'Неделя ' + now.toLocaleDateString('ru', {day:'numeric',month:'long',year:'numeric'});
+
+    document.getElementById('toolbarRow').style.display='flex';
+    if (weeks.length > 1) document.getElementById('weekBar').style.display='flex';
+    document.getElementById('lastUpdated').textContent = 'Обновлено '+new Date().toLocaleTimeString('ru');
+    updateWeekLabel();
   } catch(e) {
-    document.getElementById('app').innerHTML = `<div class="error-screen"><p>⚠️ Не удалось загрузить данные.<br><small style="opacity:0.6">${e.message}</small></p><br><button class="btn-retry" onclick="init()">Попробовать снова</button></div>`;
+    document.getElementById('app').innerHTML=`<div class="error-screen"><p>⚠️ Не удалось загрузить данные.<br><small style="opacity:0.6">${e.message}</small></p><br><button class="btn-retry" onclick="init()">Попробовать снова</button></div>`;
+  }
+}
+
+function buildWeekTabs() {
+  const tabs = document.getElementById('weekTabs');
+  let html = `<button class="week-tab active" data-week="all" onclick="selectWeek('all',this)">Все недели</button>`;
+  weeks.forEach(w => {
+    html += `<button class="week-tab" data-week="${w}" onclick="selectWeek('${w}',this)">${weekLabel(w)}</button>`;
+  });
+  tabs.innerHTML = html;
+}
+
+function selectWeek(w, el) {
+  selectedWeek = w;
+  document.querySelectorAll('.week-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  updateWeekLabel();
+  applyFilters();
+}
+
+function updateWeekLabel() {
+  const el = document.getElementById('weekLabel');
+  if (selectedWeek === 'all') {
+    el.textContent = `Все данные · ${allData.length} задач`;
+  } else {
+    el.textContent = `Неделя ${weekLabel(selectedWeek)}`;
   }
 }
 
 function buildFilters() {
   const dirs = unique(allData.map(d=>d.direction));
   const whos = unique(allData.map(d=>d.who));
-  document.getElementById('filterDir').innerHTML = '<option value="">Все направления</option>' + dirs.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
-  document.getElementById('filterWho').innerHTML = '<option value="">Все исполнители</option>' + whos.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
+  document.getElementById('filterDir').innerHTML = '<option value="">Все направления</option>'+dirs.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
+  document.getElementById('filterWho').innerHTML = '<option value="">Все исполнители</option>'+whos.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
 }
 
 function applyFilters() {
@@ -366,7 +432,11 @@ function applyFilters() {
   const who = document.getElementById('filterWho').value;
   const q = document.getElementById('searchInput').value.toLowerCase();
 
-  const filtered = allData.filter(d => {
+  let filtered = allData.filter(d => {
+    if (selectedWeek !== 'all') {
+      const w = extractWeek(d);
+      if (w !== selectedWeek) return false;
+    }
     if (dir && d.direction !== dir) return false;
     if (who && d.who !== who) return false;
     if (q && ![d.direction,d.epic,d.who,d.status,d.victory,d.result].join(' ').toLowerCase().includes(q)) return false;
@@ -377,104 +447,100 @@ function applyFilters() {
 }
 
 function renderAll(data) {
-  // Metrics
-  const groups = { releases:[], done:[], paused:[], partial:[] };
+  const groups = {releases:[],done:[],paused:[],partial:[]};
   data.forEach(d => groups[categorize(d)].push(d));
 
-  document.getElementById('metricsRow').innerHTML = `<div class="metrics">
-    <div class="metric">
-      <div class="metric-icon" style="background:#dbeafe;">🚀</div>
-      <div class="metric-text"><div class="metric-label">Релизы</div><div class="metric-value mv-blue">${groups.releases.length}</div></div>
-    </div>
-    <div class="metric">
-      <div class="metric-icon" style="background:#dcfce7;">✅</div>
-      <div class="metric-text"><div class="metric-label">Выполнено</div><div class="metric-value mv-green">${groups.done.length}</div></div>
-    </div>
-    <div class="metric">
-      <div class="metric-icon" style="background:#fef3c7;">⏸️</div>
-      <div class="metric-text"><div class="metric-label">Приостановлено</div><div class="metric-value mv-amber">${groups.paused.length}</div></div>
-    </div>
-    <div class="metric">
-      <div class="metric-icon" style="background:#ede9fe;">🔄</div>
-      <div class="metric-text"><div class="metric-label">Промежуточные</div><div class="metric-value mv-purple">${groups.partial.length}</div></div>
-    </div>
+  // Metrics
+  document.getElementById('metricsRow').innerHTML=`<div class="metrics">
+    <div class="metric"><span class="metric-icon">🚀</span><div><div class="metric-label">Релизы</div><div class="metric-value mv-blue">${groups.releases.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">✅</span><div><div class="metric-label">Выполнено</div><div class="metric-value mv-green">${groups.done.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">⏸️</span><div><div class="metric-label">Приостановлено</div><div class="metric-value mv-amber">${groups.paused.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">🔄</span><div><div class="metric-label">Промежуточные</div><div class="metric-value mv-purple">${groups.partial.length}</div></div></div>
   </div>`;
 
-  // Sections
-  let html = '<div class="content">';
+  // Columns
+  let html = '<div class="columns-wrap">';
   SECTIONS.forEach(sec => {
     const tasks = groups[sec.key];
-    html += `<div class="section ${sec.cls}" id="sec-${sec.key}">
-      <div class="section-header" onclick="toggleSection('sec-${sec.key}')">
-        <span class="section-icon">${sec.icon}</span>
-        <span class="section-title">${sec.title}</span>
-        <span class="section-count">${tasks.length} ${tasks.length===1?'задача':tasks.length<5?'задачи':'задач'}</span>
-        <span class="toggle-btn">▾</span>
-      </div>
-      <div class="section-body">`;
+    html += `<div class="col ${sec.cls}">
+      <div class="col-header">
+        <span class="col-icon">${sec.icon}</span>
+        <span class="col-title">${sec.title}</span>
+        <span class="col-count">${tasks.length}</span>
+      </div>`;
 
-    if (tasks.length === 0) {
-      html += `<div class="empty-section">Нет задач в этой категории</div>`;
+    if (!tasks.length) {
+      html += `<div class="empty-col">Нет задач</div>`;
     } else {
-      tasks.forEach((t, i) => {
+      tasks.forEach((t,i) => {
         const idx = allData.indexOf(t);
-        html += `<div class="task-card" style="animation-delay:${i*20}ms" onclick="openModal(${idx})">
-          <div class="task-top">
-            <div class="task-epic">${esc(t.epic)||'—'}</div>
-            ${t.direction ? `<span class="task-dir">${esc(t.direction)}</span>` : ''}
-          </div>
+        html += `<div class="task-card" style="animation-delay:${i*18}ms" onclick="openModal(${idx})">
+          ${t.direction?`<span class="task-dir">${esc(t.direction)}</span>`:''}
+          <div class="task-epic">${esc(t.epic)||'—'}</div>
           <div class="task-meta">
             ${t.who?`<div class="meta-who"><div class="avatar">${esc(initials(t.who))}</div>${esc(t.who)}</div>`:''}
-            ${(t.dateStart||t.dateEnd)?`<div class="meta-dates">📅 ${[t.dateStart,t.dateEnd].filter(Boolean).map(esc).join(' → ')}</div>`:''}
+            ${(t.dateStart||t.dateEnd)?`<div class="meta-date">📅 ${[t.dateStart,t.dateEnd].filter(Boolean).map(esc).join('→')}</div>`:''}
             ${t.result&&isLink(t.result)?`<a class="result-link" href="${esc(t.result)}" target="_blank" onclick="event.stopPropagation()">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              Смотреть результат
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Результат
             </a>`:''}
           </div>
           ${t.victory?`<div class="victory-block">🏆 <span>${esc(t.victory)}</span></div>`:''}
         </div>`;
       });
     }
-
-    html += `</div></div>`;
+    html += '</div>';
   });
   html += '</div>';
   document.getElementById('app').innerHTML = html;
 
-  // Build copy text
   renderCopyBox(groups);
 }
 
 function renderCopyBox(groups) {
   const now = new Date();
-  const dateStr = now.toLocaleDateString('ru', {day:'numeric', month:'long', year:'numeric'});
-  let text = `📊 Результаты за неделю (${dateStr})\n`;
+  let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
-  const emojis = { releases:'🚀', done:'✅', paused:'⏸️', partial:'🔄' };
-  const titles = { releases:'РЕЛИЗЫ', done:'ВЫПОЛНЕННЫЕ ЗАДАЧИ', paused:'ПРИОСТАНОВЛЕННЫЕ ЗАДАЧИ', partial:'ЗАДАЧИ С ПРОМЕЖУТОЧНЫМИ РЕЗУЛЬТАТАМИ' };
+  const emojis = {releases:'🚀',done:'✅',paused:'⏸️',partial:'🔄'};
+  const titles = {releases:'РЕЛИЗЫ',done:'ВЫПОЛНЕННЫЕ ЗАДАЧИ',paused:'ПРИОСТАНОВЛЕННЫЕ ЗАДАЧИ',partial:'ЗАДАЧИ С ПРОМЕЖУТОЧНЫМИ РЕЗУЛЬТАТАМИ'};
+
+  let text = `📊 Результаты за неделю (${dateStr})\n`;
 
   SECTIONS.forEach(sec => {
     const tasks = groups[sec.key];
     if (!tasks.length) return;
     text += `\n${emojis[sec.key]} ${titles[sec.key]}\n`;
+
+    // Group by direction within section
+    const byDir = {};
+    const dirOrder = [];
     tasks.forEach(t => {
-      text += `• ${t.epic || '—'}`;
-      if (t.direction) text += ` [${t.direction}]`;
-      if (t.who) text += ` — ${t.who}`;
-      text += '\n';
-      if (t.victory) text += `  🏆 ${t.victory}\n`;
+      const d = t.direction || 'Общее';
+      if (!byDir[d]) { byDir[d] = []; dirOrder.push(d); }
+      byDir[d].push(t);
+    });
+
+    dirOrder.forEach(dir => {
+      text += `\n*${dir}*\n`;
+      byDir[dir].forEach(t => {
+        if (t.victory && t.victory.trim()) {
+          text += `${t.victory}\n`;
+        } else if (t.epic) {
+          text += `${t.epic}\n`;
+        }
+      });
     });
   });
 
-  document.getElementById('copySection').innerHTML = `
+  document.getElementById('copySection').innerHTML=`
     <div class="copy-section">
       <div class="copy-header">
-        <div>
+        <div class="copy-header-left">
           <h2>📋 Текст для мессенджера</h2>
-          <p>Скопируйте и вставьте в чат команды</p>
+          <p>Скопируйте и вставьте в Telegram или WhatsApp</p>
         </div>
         <button class="btn-copy" id="copyBtn" onclick="copyText()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Скопировать
         </button>
       </div>
@@ -487,21 +553,19 @@ function copyText() {
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.classList.add('copied');
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Скопировано!`;
-    setTimeout(() => {
+    btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Скопировано!`;
+    setTimeout(()=>{
       btn.classList.remove('copied');
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Скопировать`;
-    }, 2500);
+      btn.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Скопировать`;
+    },2500);
   });
 }
-
-function toggleSection(id) { document.getElementById(id).classList.toggle('collapsed'); }
 
 function openModal(idx) {
   const d = allData[idx];
   const cat = categorize(d);
   const sec = SECTIONS.find(s=>s.key===cat);
-  document.getElementById('modalBody').innerHTML = `
+  document.getElementById('modalBody').innerHTML=`
     <h2>${esc(d.epic)||'Задача'}</h2>
     ${sec?`<div class="modal-field"><label>Категория</label><p>${sec.icon} ${sec.title}</p></div>`:''}
     ${d.direction?`<div class="modal-field"><label>Направление</label><p>${esc(d.direction)}</p></div>`:''}
