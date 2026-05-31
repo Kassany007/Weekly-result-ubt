@@ -185,9 +185,29 @@
 
   .empty-col { background: var(--white); border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center; font-size: 12px; color: var(--muted); font-style: italic; }
 
+  /* TABS */
+  .tab-nav {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 2rem; display: flex; gap: 0; align-items: flex-end;
+  }
+  .tab-btn {
+    display: flex; align-items: center; gap: 7px;
+    padding: 0.85rem 1.25rem; font-family: 'Onest', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--muted); background: transparent; border: none; border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all 0.18s; margin-bottom: -1px; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--text); }
+  .tab-badge {
+    background: var(--paused-accent); color: #fff; font-size: 10px; font-weight: 700;
+    border-radius: 10px; padding: 1px 6px; min-width: 18px; text-align: center;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .tab-content { }
+
   /* MISSING SECTION */
   .missing-section {
-    margin: 0 2rem 1.25rem;
+    margin: 1.25rem 2rem 1.25rem;
     background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   }
   .missing-header {
@@ -222,7 +242,7 @@
 
   /* COPY BOX */
   .copy-section {
-    margin: 0 2rem 2rem;
+    margin: 1.25rem 2rem 2rem;
     background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
   }
   .copy-header {
@@ -282,7 +302,10 @@
     .columns-wrap { grid-template-columns: 1fr; }
     .metrics { grid-template-columns: repeat(2,1fr); }
     .copy-section { margin-left: 1rem; margin-right: 1rem; }
+    .missing-section { margin-left: 1rem; margin-right: 1rem; }
     .search-wrap input { width: 110px; }
+    .tab-nav { padding: 0 1rem; overflow-x: auto; }
+    .tab-btn { padding: 0.75rem 0.9rem; font-size: 12px; }
   }
 </style>
 </head>
@@ -318,10 +341,33 @@
   </div>
 </div>
 
+<!-- TAB NAV -->
+<div class="tab-nav" id="tabNav" style="display:none;">
+  <button class="tab-btn active" onclick="switchTab('data')" id="tab-data">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    Данные
+  </button>
+  <button class="tab-btn" onclick="switchTab('missing')" id="tab-missing">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+    Пропуски
+    <span class="tab-badge" id="missingBadge" style="display:none;"></span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('messenger')" id="tab-messenger">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Текст для мессенджера
+  </button>
+</div>
+
 <div id="metricsRow"></div>
-<div id="app"></div>
-<div id="missingSection"></div>
-<div id="copySection"></div>
+<div id="tab-content-data" class="tab-content">
+  <div id="app"></div>
+</div>
+<div id="tab-content-missing" class="tab-content" style="display:none;">
+  <div id="missingSection"></div>
+</div>
+<div id="tab-content-messenger" class="tab-content" style="display:none;">
+  <div id="copySection"></div>
+</div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal">
@@ -417,6 +463,7 @@ async function init() {
   document.getElementById('missingSection').innerHTML='';
   document.getElementById('weekBar').style.display='none';
   document.getElementById('toolbarRow').style.display='none';
+  document.getElementById('tabNav').style.display='none';
   try {
     // Load all three sources in parallel
     const [mainRes, staffRes, dirsRes] = await Promise.all([
@@ -454,12 +501,25 @@ async function init() {
     applyFilters();
 
     document.getElementById('toolbarRow').style.display='flex';
+    document.getElementById('tabNav').style.display='flex';
     if (weeks.length > 1) document.getElementById('weekBar').style.display='flex';
     document.getElementById('lastUpdated').textContent = 'Обновлено '+new Date().toLocaleTimeString('ru');
     updateWeekLabel();
   } catch(e) {
     document.getElementById('app').innerHTML=`<div class="error-screen"><p>⚠️ Не удалось загрузить данные.<br><small style="opacity:0.6">${e.message}</small></p><br><button class="btn-retry" onclick="init()">Попробовать снова</button></div>`;
   }
+}
+
+let activeTab = 'data';
+function switchTab(tab) {
+  activeTab = tab;
+  ['data','missing','messenger'].forEach(t => {
+    document.getElementById('tab-content-'+t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab);
+  });
+  // Toolbar only visible on data tab
+  document.getElementById('toolbarRow').style.display = tab === 'data' ? 'flex' : 'none';
+  document.getElementById('metricsRow').style.display = tab === 'data' ? '' : 'none';
 }
 
 function buildWeekTabs() {
@@ -645,6 +705,16 @@ function renderMissing(weekData) {
 
   html += `</div></div>`;
   document.getElementById('missingSection').innerHTML = html;
+
+  // Update badge on tab
+  const badge = document.getElementById('missingBadge');
+  const total = missingPeople.length + missingDirs.length;
+  if (total > 0) {
+    badge.textContent = total;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
 }
 
 function renderCopyBox(groups) {
@@ -705,10 +775,11 @@ function renderCopyBox(groups) {
           <p>Скопируйте и вставьте в Telegram-канал <strong>УБТ_official</strong></p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn-ai" id="aiBtn" onclick="reformulateWithAI()">
+          <button class="btn-ai" disabled style="opacity:0.45;cursor:not-allowed;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><circle cx="18" cy="5" r="3"/></svg>
             ✨ Улучшить текст
           </button>
+          <span style="font-size:11px;color:var(--muted);font-style:italic;">в работе</span>
           <button class="btn-copy" id="copyBtn" onclick="copyText()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Скопировать
