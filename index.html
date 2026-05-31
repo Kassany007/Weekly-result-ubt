@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Трекер задач</title>
+<title>Победы по направлениям</title>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -11,133 +11,153 @@
     --surface: #16181c;
     --surface2: #1e2127;
     --border: rgba(255,255,255,0.07);
-    --border2: rgba(255,255,255,0.12);
+    --border2: rgba(255,255,255,0.13);
     --text: #f0f0f0;
     --muted: #7a7f8a;
     --accent: #c8f04d;
-    --accent2: #3b82f6;
     --done: #22c55e;
     --progress: #f59e0b;
-    --todo: #6366f1;
+    --todo: #818cf8;
     --blocked: #ef4444;
-    --radius: 12px;
+    --radius: 14px;
     --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Onest', sans-serif; min-height: 100vh; }
 
+  /* HEADER */
   .header {
     padding: 2rem 2.5rem 1.5rem;
     border-bottom: 1px solid var(--border);
     display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
   }
-  .header h1 { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.03em; }
+  .header h1 { font-family: 'Unbounded', sans-serif; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.03em; }
   .header h1 span { color: var(--accent); }
   .header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
-  .last-updated { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-  .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .live { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  .loading-screen {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 60vh; gap: 16px; color: var(--muted);
+  .btn-refresh {
+    background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    color: var(--muted); font-family: 'Onest', sans-serif; font-size: 12px; padding: 6px 12px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s, border-color 0.2s;
   }
-  .spinner {
-    width: 36px; height: 36px; border: 2px solid var(--border2);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-refresh:hover { color: var(--text); border-color: var(--accent); }
 
+  /* METRICS */
   .metrics {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1px; background: var(--border); border-bottom: 1px solid var(--border);
   }
-  .metric { background: var(--surface); padding: 1.25rem 1.5rem; }
-  .metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
-  .metric-value { font-family: 'Unbounded', sans-serif; font-size: 1.6rem; font-weight: 600; }
-  .mv-accent { color: var(--accent); }
-  .mv-done { color: var(--done); }
-  .mv-progress { color: var(--progress); }
-  .mv-todo { color: #a5b4fc; }
+  .metric { background: var(--surface); padding: 1.1rem 1.5rem; }
+  .metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+  .metric-value { font-family: 'Unbounded', sans-serif; font-size: 1.5rem; font-weight: 600; }
+  .mv-a { color: var(--accent); }
+  .mv-d { color: var(--done); }
+  .mv-p { color: var(--progress); }
+  .mv-t { color: var(--todo); }
 
-  .filters {
+  /* FILTERS */
+  .toolbar {
     padding: 1rem 2.5rem; display: flex; gap: 10px; align-items: center;
     flex-wrap: wrap; border-bottom: 1px solid var(--border);
   }
   .filter-label { font-size: 12px; color: var(--muted); }
   select {
     background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; padding: 7px 30px 7px 12px;
+    color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; padding: 7px 28px 7px 10px;
     outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f8a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 10px center;
+    background-repeat: no-repeat; background-position: right 8px center;
   }
-  select:focus { border-color: var(--accent); }
+  select:focus { border-color: var(--accent); outline: none; }
   .search-wrap {
     margin-left: auto; display: flex; align-items: center; gap: 8px;
     background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 7px 12px;
   }
-  .search-wrap svg { opacity: 0.4; flex-shrink: 0; }
-  .search-wrap input { background: none; border: none; color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; outline: none; width: 180px; }
+  .search-wrap svg { opacity: 0.35; flex-shrink: 0; }
+  .search-wrap input { background: none; border: none; color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; outline: none; width: 170px; }
   .search-wrap input::placeholder { color: var(--muted); }
 
-  .cards-area { padding: 1.5rem 2.5rem; }
-  .results-count { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
-  .results-count strong { color: var(--text); }
-  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  /* MAIN CONTENT */
+  .content { padding: 1.5rem 2.5rem 3rem; }
+  .summary-line { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+  .summary-line strong { color: var(--text); }
 
-  .card {
+  /* DIRECTION GROUP */
+  .direction-group { margin-bottom: 2rem; }
+  .direction-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;
+    cursor: pointer; user-select: none;
+  }
+  .direction-stripe { width: 4px; border-radius: 4px; flex-shrink: 0; align-self: stretch; min-height: 24px; }
+  .direction-name { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 600; flex: 1; }
+  .direction-count {
+    font-size: 11px; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 20px; padding: 2px 10px; color: var(--muted);
+  }
+  .direction-done { font-size: 12px; color: var(--done); }
+  .toggle-icon { color: var(--muted); font-size: 16px; transition: transform 0.2s; }
+  .direction-group.collapsed .toggle-icon { transform: rotate(-90deg); }
+  .direction-group.collapsed .tasks-list { display: none; }
+
+  /* TASKS LIST */
+  .tasks-list { display: flex; flex-direction: column; gap: 10px; padding-left: 16px; border-left: 1px solid var(--border); }
+
+  /* TASK ROW */
+  .task-row {
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1.25rem; display: flex; flex-direction: column; gap: 10px;
-    transition: border-color 0.2s, transform 0.15s; cursor: pointer; position: relative; overflow: hidden;
+    padding: 1rem 1.25rem; display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 8px 12px;
+    cursor: pointer; transition: border-color 0.18s, transform 0.15s;
     animation: fadeUp 0.3s ease both;
+    position: relative; overflow: hidden;
   }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--card-accent, var(--border2)); }
-  .card:hover { border-color: var(--border2); transform: translateY(-2px); }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .task-row::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--row-accent, var(--border2)); }
+  .task-row:hover { border-color: var(--border2); transform: translateX(2px); }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
-  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-  .card-direction {
-    font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
-    background: var(--surface2); padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap;
-  }
-  .status-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .task-main { grid-column: 1; grid-row: 1; display: flex; align-items: flex-start; gap: 10px; }
+  .task-epic { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; flex: 1; }
+  .task-status-area { grid-column: 2; grid-row: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+
+  .status-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
   .s-done { background: rgba(34,197,94,0.12); color: var(--done); }
   .s-progress { background: rgba(245,158,11,0.12); color: var(--progress); }
-  .s-todo { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+  .s-todo { background: rgba(129,140,248,0.12); color: var(--todo); }
   .s-blocked { background: rgba(239,68,68,0.12); color: var(--blocked); }
   .s-default { background: var(--surface2); color: var(--muted); }
 
-  .card-epic { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 600; line-height: 1.4; }
-  .card-who { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .task-meta { grid-column: 1 / -1; grid-row: 2; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+  .meta-who { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); }
   .avatar {
-    width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2);
-    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600;
     color: var(--accent); flex-shrink: 0; font-family: 'Unbounded', sans-serif;
   }
-  .card-dates { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
-  .date-item { display: flex; align-items: center; gap: 5px; }
-  .card-victory {
-    background: var(--surface2); border-left: 2px solid var(--accent);
+  .meta-dates { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .meta-sep { opacity: 0.3; }
+
+  /* VICTORY highlight */
+  .victory-block {
+    grid-column: 1 / -1;
+    background: linear-gradient(90deg, rgba(200,240,77,0.06) 0%, transparent 100%);
+    border-left: 2px solid var(--accent);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    padding: 8px 10px; font-size: 13px; color: var(--text); line-height: 1.5; font-style: italic;
+    padding: 8px 12px;
+    font-size: 13px; color: var(--text); line-height: 1.55;
+    display: flex; gap: 8px; align-items: flex-start;
   }
-  .card-result { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-  .card-result a { color: var(--accent2); text-decoration: none; font-size: 12px; }
-  .card-result a:hover { text-decoration: underline; }
+  .victory-icon { flex-shrink: 0; margin-top: 1px; }
+  .result-link { font-size: 12px; color: #60a5fa; display: flex; align-items: center; gap: 5px; }
+  .result-link:hover { text-decoration: underline; }
+  .result-link svg { flex-shrink: 0; }
 
-  .empty { text-align: center; padding: 4rem; color: var(--muted); grid-column: 1/-1; }
-  .empty p { font-size: 15px; margin-top: 1rem; }
-
-  .error-screen {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 50vh; gap: 12px; color: var(--muted); padding: 2rem; text-align: center;
-  }
-  .error-screen .err-icon { font-size: 48px; }
-  .error-screen p { font-size: 14px; max-width: 400px; line-height: 1.6; }
-  .error-screen code { background: var(--surface2); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--accent); }
-
+  /* MODAL */
   .modal-overlay {
     display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
     z-index: 100; align-items: center; justify-content: center; padding: 2rem;
@@ -147,27 +167,37 @@
     background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius);
     padding: 1.75rem; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative;
   }
-  .modal h2 { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 1.25rem; padding-right: 2rem; }
+  .modal h2 { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 600; line-height: 1.45; margin-bottom: 1.25rem; padding-right: 2rem; }
   .modal-close {
     position: absolute; top: 1rem; right: 1rem; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; color: var(--muted); cursor: pointer; padding: 4px 10px; font-size: 16px;
+    border-radius: 6px; color: var(--muted); cursor: pointer; padding: 4px 10px; font-size: 16px; line-height: 1;
   }
   .modal-close:hover { color: var(--text); }
   .modal-field { margin-bottom: 1rem; }
   .modal-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); display: block; margin-bottom: 5px; }
-  .modal-field p { font-size: 14px; line-height: 1.6; }
-  .modal-field a { color: var(--accent2); font-size: 13px; word-break: break-all; }
+  .modal-field p { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .modal-field a { color: #60a5fa; font-size: 13px; word-break: break-all; }
 
-  .refresh-btn {
-    background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-sm);
-    color: var(--muted); font-family: 'Onest', sans-serif; font-size: 12px; padding: 5px 12px;
-    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s, border-color 0.2s;
+  /* STATES */
+  .loading-screen, .error-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 50vh; gap: 14px; color: var(--muted); text-align: center; padding: 2rem;
   }
-  .refresh-btn:hover { color: var(--text); border-color: var(--accent); }
+  .spinner { width: 34px; height: 34px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-screen p { font-size: 14px; max-width: 400px; line-height: 1.6; }
+  .btn-retry {
+    background: transparent; border: 1px solid var(--accent); border-radius: var(--radius-sm);
+    color: var(--accent); font-family: 'Onest', sans-serif; font-size: 13px; padding: 8px 18px; cursor: pointer;
+  }
 
-  @media (max-width: 600px) {
-    .header, .filters, .cards-area { padding-left: 1rem; padding-right: 1rem; }
+  .empty-dir { font-size: 13px; color: var(--muted); padding: 12px 0; font-style: italic; }
+
+  @media (max-width: 640px) {
+    .header, .toolbar, .content { padding-left: 1rem; padding-right: 1rem; }
     .search-wrap input { width: 120px; }
+    .task-row { grid-template-columns: 1fr; }
+    .task-status-area { align-items: flex-start; }
   }
 </style>
 </head>
@@ -175,25 +205,39 @@
 
 <div class="header">
   <div>
-    <h1>Task <span>Tracker</span></h1>
-    <p>Данные из Google Sheets · обновляется автоматически</p>
+    <h1>Победы по <span>направлениям</span></h1>
+    <p>Результаты работы команды · группировка по направлениям</p>
   </div>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="last-updated">
-      <div class="dot-live"></div>
-      <span id="lastUpdated">Загрузка...</span>
-    </div>
-    <button class="refresh-btn" onclick="init()">
+  <div class="header-right">
+    <div class="live"><div class="live-dot"></div><span id="lastUpdated">Загрузка...</span></div>
+    <button class="btn-refresh" onclick="init()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
       Обновить
     </button>
   </div>
 </div>
 
+<div id="metricsRow"></div>
+
+<div id="toolbarRow" style="display:none;" class="toolbar">
+  <span class="filter-label">Статус:</span>
+  <select id="filterStatus" onchange="applyFilters()">
+    <option value="">Все статусы</option>
+  </select>
+  <span class="filter-label">Исполнитель:</span>
+  <select id="filterWho" onchange="applyFilters()">
+    <option value="">Все</option>
+  </select>
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
+  </div>
+</div>
+
 <div id="app"></div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modalContent">
+  <div class="modal">
     <button class="modal-close" onclick="closeModalBtn()">✕</button>
     <div id="modalBody"></div>
   </div>
@@ -204,197 +248,213 @@ const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERL
 
 let allData = [];
 
+// Direction colors palette
+const DIR_COLORS = ['#c8f04d','#3b82f6','#f59e0b','#a78bfa','#34d399','#f87171','#60a5fa','#fb923c','#4ade80','#e879f9'];
+const dirColorMap = {};
+let colorIdx = 0;
+function getDirColor(dir) {
+  if (!dirColorMap[dir]) { dirColorMap[dir] = DIR_COLORS[colorIdx % DIR_COLORS.length]; colorIdx++; }
+  return dirColorMap[dir];
+}
+
 function parseCSV(text) {
   const lines = text.trim().split('\n');
   const result = [];
   for (let i = 1; i < lines.length; i++) {
-    const cols = splitCSVLine(lines[i]);
+    const cols = splitCSV(lines[i]);
     if (cols.every(c => !c.trim())) continue;
-    result.push({
-      direction: cols[0] || '',
-      epic:      cols[1] || '',
-      who:       cols[2] || '',
-      status:    cols[3] || '',
-      dateStart: cols[4] || '',
-      dateEnd:   cols[5] || '',
-      victory:   cols[6] || '',
-      result:    cols[7] || '',
-    });
+    result.push({ direction: cols[0]||'', epic: cols[1]||'', who: cols[2]||'', status: cols[3]||'', dateStart: cols[4]||'', dateEnd: cols[5]||'', victory: cols[6]||'', result: cols[7]||'' });
   }
   return result;
 }
 
-function splitCSVLine(line) {
-  const result = []; let cur = ''; let inQ = false;
+function splitCSV(line) {
+  const out = []; let cur = ''; let inQ = false;
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
-    if (c === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else { inQ = !inQ; } }
-    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
-    else { cur += c; }
+    if (c === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else inQ = !inQ; }
+    else if (c === ',' && !inQ) { out.push(cur.trim()); cur = ''; }
+    else cur += c;
   }
-  result.push(cur.trim());
-  return result;
+  out.push(cur.trim());
+  return out;
 }
 
 function statusClass(s) {
   if (!s) return 's-default';
   const l = s.toLowerCase();
-  if (l.includes('готов') || l.includes('выполн') || l.includes('done') || l.includes('завер') || l.includes('complete')) return 's-done';
-  if (l.includes('работ') || l.includes('прогресс') || l.includes('in progress') || l.includes('в работе') || l.includes('идёт')) return 's-progress';
-  if (l.includes('блок') || l.includes('block') || l.includes('стоп') || l.includes('пауз')) return 's-blocked';
-  if (l.includes('план') || l.includes('todo') || l.includes('очередь') || l.includes('новый') || l.includes('нов') || l.includes('старт')) return 's-todo';
+  if (l.includes('готов')||l.includes('выполн')||l.includes('done')||l.includes('завер')||l.includes('complete')) return 's-done';
+  if (l.includes('работ')||l.includes('прогресс')||l.includes('in progress')||l.includes('в работе')||l.includes('идёт')) return 's-progress';
+  if (l.includes('блок')||l.includes('block')||l.includes('стоп')||l.includes('пауз')) return 's-blocked';
+  if (l.includes('план')||l.includes('todo')||l.includes('очередь')||l.includes('новый')||l.includes('нов')||l.includes('старт')) return 's-todo';
   return 's-default';
 }
 
-function cardAccent(s) {
+function rowAccent(s) {
   const c = statusClass(s);
-  if (c === 's-done') return '#22c55e';
-  if (c === 's-progress') return '#f59e0b';
-  if (c === 's-blocked') return '#ef4444';
-  if (c === 's-todo') return '#6366f1';
+  if (c==='s-done') return '#22c55e';
+  if (c==='s-progress') return '#f59e0b';
+  if (c==='s-blocked') return '#ef4444';
+  if (c==='s-todo') return '#818cf8';
   return 'rgba(255,255,255,0.1)';
 }
 
 function initials(name) {
   if (!name) return '?';
-  return name.trim().split(/[\s,]+/).slice(0,2).map(w => w[0] || '').join('').toUpperCase() || '?';
+  return name.trim().split(/[\s,]+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';
 }
 
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function unique(arr) { return [...new Set(arr.filter(Boolean))].sort(); }
+function isLink(s) { return s && (s.startsWith('http://')||s.startsWith('https://')); }
 
 async function init() {
   document.getElementById('app').innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Загружаем данные...</p></div>`;
+  document.getElementById('metricsRow').innerHTML = '';
+  document.getElementById('toolbarRow').style.display = 'none';
   try {
     const res = await fetch(CSV_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     allData = parseCSV(text);
-    if (allData.length === 0) throw new Error('Таблица пустая');
-    renderAll();
+    if (!allData.length) throw new Error('Таблица пустая');
+    buildFilters();
+    renderMetrics(allData);
+    applyFilters();
+    document.getElementById('toolbarRow').style.display = 'flex';
     document.getElementById('lastUpdated').textContent = 'Обновлено ' + new Date().toLocaleTimeString('ru');
   } catch(e) {
-    document.getElementById('app').innerHTML = `
-      <div class="error-screen">
-        <div class="err-icon">⚠️</div>
-        <p>Не удалось загрузить данные.<br>Убедитесь что таблица опубликована:<br>
-        <strong>Файл → Поделиться → Опубликовать в интернете → CSV</strong></p>
-        <p style="margin-top:8px;font-size:12px;opacity:0.6;">Ошибка: ${e.message}</p>
-        <button class="refresh-btn" onclick="init()" style="margin-top:16px;color:var(--accent);border-color:var(--accent);">Попробовать снова</button>
-      </div>`;
+    document.getElementById('app').innerHTML = `<div class="error-screen"><p>⚠️ Не удалось загрузить данные.<br><small>${e.message}</small></p><button class="btn-retry" onclick="init()">Попробовать снова</button></div>`;
   }
 }
 
-function renderAll() {
-  const total = allData.length;
-  const done = allData.filter(d => statusClass(d.status) === 's-done').length;
-  const inp = allData.filter(d => statusClass(d.status) === 's-progress').length;
-  const todo = allData.filter(d => statusClass(d.status) === 's-todo').length;
-
-  const dirs = unique(allData.map(d => d.direction));
-  const statuses = unique(allData.map(d => d.status));
-  const whos = unique(allData.map(d => d.who));
-
-  document.getElementById('app').innerHTML = `
-    <div class="metrics">
-      <div class="metric"><div class="metric-label">Всего задач</div><div class="metric-value mv-accent">${total}</div></div>
-      <div class="metric"><div class="metric-label">Выполнено</div><div class="metric-value mv-done">${done}</div></div>
-      <div class="metric"><div class="metric-label">В работе</div><div class="metric-value mv-progress">${inp}</div></div>
-      <div class="metric"><div class="metric-label">В очереди</div><div class="metric-value mv-todo">${todo}</div></div>
-      <div class="metric"><div class="metric-label">Выполнено %</div><div class="metric-value mv-done">${total ? Math.round(done/total*100) : 0}%</div></div>
-    </div>
-    <div class="filters">
-      <span class="filter-label">Фильтр:</span>
-      <select id="filterDir" onchange="applyFilters()">
-        <option value="">Все направления</option>
-        ${dirs.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('')}
-      </select>
-      <select id="filterStatus" onchange="applyFilters()">
-        <option value="">Все статусы</option>
-        ${statuses.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}
-      </select>
-      <select id="filterWho" onchange="applyFilters()">
-        <option value="">Все исполнители</option>
-        ${whos.map(w => `<option value="${esc(w)}">${esc(w)}</option>`).join('')}
-      </select>
-      <div class="search-wrap">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
-      </div>
-    </div>
-    <div class="cards-area">
-      <div class="results-count" id="resultsCount"></div>
-      <div class="cards-grid" id="cardsGrid"></div>
-    </div>
-  `;
-  applyFilters();
+function renderMetrics(data) {
+  const total = data.length;
+  const done = data.filter(d=>statusClass(d.status)==='s-done').length;
+  const inp = data.filter(d=>statusClass(d.status)==='s-progress').length;
+  const dirs = unique(data.map(d=>d.direction)).length;
+  document.getElementById('metricsRow').innerHTML = `<div class="metrics">
+    <div class="metric"><div class="metric-label">Направлений</div><div class="metric-value mv-a">${dirs}</div></div>
+    <div class="metric"><div class="metric-label">Всего задач</div><div class="metric-value mv-t">${total}</div></div>
+    <div class="metric"><div class="metric-label">Выполнено</div><div class="metric-value mv-d">${done}</div></div>
+    <div class="metric"><div class="metric-label">В работе</div><div class="metric-value mv-p">${inp}</div></div>
+    <div class="metric"><div class="metric-label">% выполнения</div><div class="metric-value mv-d">${total?Math.round(done/total*100):0}%</div></div>
+  </div>`;
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function buildFilters() {
+  const statuses = unique(allData.map(d=>d.status));
+  const whos = unique(allData.map(d=>d.who));
+  const fS = document.getElementById('filterStatus');
+  const fW = document.getElementById('filterWho');
+  fS.innerHTML = '<option value="">Все статусы</option>' + statuses.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  fW.innerHTML = '<option value="">Все</option>' + whos.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
+}
 
 function applyFilters() {
-  const dir = document.getElementById('filterDir').value;
   const status = document.getElementById('filterStatus').value;
   const who = document.getElementById('filterWho').value;
   const q = document.getElementById('searchInput').value.toLowerCase();
 
   const filtered = allData.filter(d => {
-    if (dir && d.direction !== dir) return false;
     if (status && d.status !== status) return false;
     if (who && d.who !== who) return false;
     if (q && ![d.direction,d.epic,d.who,d.status,d.victory,d.result].join(' ').toLowerCase().includes(q)) return false;
     return true;
   });
 
-  document.getElementById('resultsCount').innerHTML = `Показано <strong>${filtered.length}</strong> из ${allData.length} задач`;
-  renderCards(filtered);
+  renderGroups(filtered);
 }
 
-function renderCards(data) {
-  const grid = document.getElementById('cardsGrid');
-  if (data.length === 0) {
-    grid.innerHTML = `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>Ничего не найдено</p></div>`;
+function renderGroups(data) {
+  const app = document.getElementById('app');
+  if (!data.length) {
+    app.innerHTML = `<div class="content"><div style="text-align:center;padding:3rem;color:var(--muted);font-size:14px;">Ничего не найдено</div></div>`;
     return;
   }
-  grid.innerHTML = data.map((d, i) => {
-    const idx = allData.indexOf(d);
-    const sc = statusClass(d.status);
-    const isLink = d.result && (d.result.startsWith('http://') || d.result.startsWith('https://'));
-    return `<div class="card" style="--card-accent:${cardAccent(d.status)};animation-delay:${Math.min(i*25,300)}ms" onclick="openModal(${idx})">
-      <div class="card-top">
-        ${d.direction ? `<span class="card-direction">${esc(d.direction)}</span>` : '<span></span>'}
-        ${d.status ? `<span class="status-badge ${sc}">${esc(d.status)}</span>` : ''}
+
+  // Group by direction preserving order
+  const groups = {};
+  const order = [];
+  data.forEach(d => {
+    const key = d.direction || 'Без направления';
+    if (!groups[key]) { groups[key] = []; order.push(key); }
+    groups[key].push(d);
+  });
+
+  const totalShown = data.length;
+  let html = `<div class="content">
+    <div class="summary-line">Показано <strong>${totalShown}</strong> задач в <strong>${order.length}</strong> направлениях</div>`;
+
+  order.forEach((dir, gi) => {
+    const tasks = groups[dir];
+    const color = getDirColor(dir);
+    const doneCount = tasks.filter(t=>statusClass(t.status)==='s-done').length;
+
+    html += `<div class="direction-group" id="dg-${gi}">
+      <div class="direction-header" onclick="toggleGroup('dg-${gi}')">
+        <div class="direction-stripe" style="background:${color};"></div>
+        <div class="direction-name" style="color:${color}">${esc(dir)}</div>
+        <span class="direction-done">✓ ${doneCount}/${tasks.length}</span>
+        <span class="direction-count">${tasks.length} ${tasks.length===1?'задача':tasks.length<5?'задачи':'задач'}</span>
+        <span class="toggle-icon">▾</span>
       </div>
-      <div class="card-epic">${esc(d.epic) || '—'}</div>
-      ${d.who ? `<div class="card-who"><div class="avatar">${esc(initials(d.who))}</div>${esc(d.who)}</div>` : ''}
-      ${(d.dateStart || d.dateEnd) ? `<div class="card-dates">
-        ${d.dateStart ? `<div class="date-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>${esc(d.dateStart)}</div>` : ''}
-        ${d.dateEnd ? `<div class="date-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>${esc(d.dateEnd)}</div>` : ''}
-      </div>` : ''}
-      ${d.victory ? `<div class="card-victory">🏆 ${esc(d.victory)}</div>` : ''}
-      ${d.result ? `<div class="card-result">${isLink ? `<a href="${esc(d.result)}" target="_blank" onclick="event.stopPropagation()">Смотреть результат →</a>` : esc(d.result)}</div>` : ''}
-    </div>`;
-  }).join('');
+      <div class="tasks-list" style="border-left-color:${color}33;">`;
+
+    tasks.forEach((t, ti) => {
+      const sc = statusClass(t.status);
+      const accent = rowAccent(t.status);
+      const idx = allData.indexOf(t);
+      html += `<div class="task-row" style="--row-accent:${accent};animation-delay:${Math.min(ti*20,200)}ms" onclick="openModal(${idx})">
+        <div class="task-main">
+          <div class="task-epic">${esc(t.epic)||'—'}</div>
+        </div>
+        <div class="task-status-area">
+          ${t.status ? `<span class="status-badge ${sc}">${esc(t.status)}</span>` : ''}
+          ${(t.dateStart||t.dateEnd) ? `<div class="meta-dates" style="font-size:11px;">
+            ${t.dateStart?esc(t.dateStart):''}${t.dateStart&&t.dateEnd?' → ':''}${t.dateEnd?esc(t.dateEnd):''}
+          </div>` : ''}
+        </div>
+        <div class="task-meta">
+          ${t.who ? `<div class="meta-who"><div class="avatar">${esc(initials(t.who))}</div>${esc(t.who)}</div>` : ''}
+          ${t.result && isLink(t.result) ? `<a class="result-link" href="${esc(t.result)}" target="_blank" onclick="event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Результат
+          </a>` : ''}
+        </div>
+        ${t.victory ? `<div class="victory-block"><span class="victory-icon">🏆</span><span>${esc(t.victory)}</span></div>` : ''}
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += '</div>';
+  app.innerHTML = html;
+}
+
+function toggleGroup(id) {
+  document.getElementById(id).classList.toggle('collapsed');
 }
 
 function openModal(idx) {
   const d = allData[idx];
   const sc = statusClass(d.status);
-  const isLink = d.result && (d.result.startsWith('http://') || d.result.startsWith('https://'));
   document.getElementById('modalBody').innerHTML = `
-    <h2>${esc(d.epic) || 'Задача'}</h2>
-    ${d.direction ? `<div class="modal-field"><label>Направление</label><p>${esc(d.direction)}</p></div>` : ''}
-    ${d.status ? `<div class="modal-field"><label>Статус</label><p><span class="status-badge ${sc}">${esc(d.status)}</span></p></div>` : ''}
-    ${d.who ? `<div class="modal-field"><label>Исполнитель</label><p>${esc(d.who)}</p></div>` : ''}
-    ${(d.dateStart || d.dateEnd) ? `<div class="modal-field"><label>Сроки</label><p>${[d.dateStart,d.dateEnd].filter(Boolean).map(esc).join(' → ')}</p></div>` : ''}
-    ${d.victory ? `<div class="modal-field"><label>Текст победы</label><p>${esc(d.victory)}</p></div>` : ''}
-    ${d.result ? `<div class="modal-field"><label>Результаты работы</label>${isLink ? `<a href="${esc(d.result)}" target="_blank">${esc(d.result)}</a>` : `<p>${esc(d.result)}</p>`}</div>` : ''}
+    <h2>${esc(d.epic)||'Задача'}</h2>
+    ${d.direction?`<div class="modal-field"><label>Направление</label><p style="color:${getDirColor(d.direction)}">${esc(d.direction)}</p></div>`:''}
+    ${d.status?`<div class="modal-field"><label>Статус</label><p><span class="status-badge ${sc}">${esc(d.status)}</span></p></div>`:''}
+    ${d.who?`<div class="modal-field"><label>Исполнитель</label><p>${esc(d.who)}</p></div>`:''}
+    ${(d.dateStart||d.dateEnd)?`<div class="modal-field"><label>Сроки</label><p>${[d.dateStart,d.dateEnd].filter(Boolean).map(esc).join(' → ')}</p></div>`:''}
+    ${d.victory?`<div class="modal-field"><label>Текст победы</label><p>${esc(d.victory)}</p></div>`:''}
+    ${d.result?`<div class="modal-field"><label>Результаты работы</label>${isLink(d.result)?`<a href="${esc(d.result)}" target="_blank">${esc(d.result)}</a>`:`<p>${esc(d.result)}</p>`}</div>`:''}
   `;
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
+function closeModal(e) { if (e.target===document.getElementById('modalOverlay')) closeModalBtn(); }
 function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModalBtn(); });
 
 init();
 </script>
