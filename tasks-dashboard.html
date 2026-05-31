@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трекер задач</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --surface: #16181c;
+    --surface2: #1e2127;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f0;
+    --muted: #7a7f8a;
+    --accent: #c8f04d;
+    --accent2: #3b82f6;
+    --done: #22c55e;
+    --progress: #f59e0b;
+    --todo: #6366f1;
+    --blocked: #ef4444;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Onest', sans-serif; min-height: 100vh; }
+
+  .header {
+    padding: 2rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  .header h1 { font-family: 'Unbounded', sans-serif; font-size: 1.4rem; font-weight: 600; letter-spacing: -0.03em; }
+  .header h1 span { color: var(--accent); }
+  .header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .last-updated { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .loading-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 60vh; gap: 16px; color: var(--muted);
+  }
+  .spinner {
+    width: 36px; height: 36px; border: 2px solid var(--border2);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .metrics {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px; background: var(--border); border-bottom: 1px solid var(--border);
+  }
+  .metric { background: var(--surface); padding: 1.25rem 1.5rem; }
+  .metric-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+  .metric-value { font-family: 'Unbounded', sans-serif; font-size: 1.6rem; font-weight: 600; }
+  .mv-accent { color: var(--accent); }
+  .mv-done { color: var(--done); }
+  .mv-progress { color: var(--progress); }
+  .mv-todo { color: #a5b4fc; }
+
+  .filters {
+    padding: 1rem 2.5rem; display: flex; gap: 10px; align-items: center;
+    flex-wrap: wrap; border-bottom: 1px solid var(--border);
+  }
+  .filter-label { font-size: 12px; color: var(--muted); }
+  select {
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; padding: 7px 30px 7px 12px;
+    outline: none; cursor: pointer; appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7f8a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  select:focus { border-color: var(--accent); }
+  .search-wrap {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 7px 12px;
+  }
+  .search-wrap svg { opacity: 0.4; flex-shrink: 0; }
+  .search-wrap input { background: none; border: none; color: var(--text); font-family: 'Onest', sans-serif; font-size: 13px; outline: none; width: 180px; }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  .cards-area { padding: 1.5rem 2.5rem; }
+  .results-count { font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+  .results-count strong { color: var(--text); }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.25rem; display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.2s, transform 0.15s; cursor: pointer; position: relative; overflow: hidden;
+    animation: fadeUp 0.3s ease both;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--card-accent, var(--border2)); }
+  .card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .card-direction {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
+    background: var(--surface2); padding: 3px 9px; border-radius: 20px; border: 1px solid var(--border); white-space: nowrap;
+  }
+  .status-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+  .s-done { background: rgba(34,197,94,0.12); color: var(--done); }
+  .s-progress { background: rgba(245,158,11,0.12); color: var(--progress); }
+  .s-todo { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+  .s-blocked { background: rgba(239,68,68,0.12); color: var(--blocked); }
+  .s-default { background: var(--surface2); color: var(--muted); }
+
+  .card-epic { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 600; line-height: 1.4; }
+  .card-who { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .avatar {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600;
+    color: var(--accent); flex-shrink: 0; font-family: 'Unbounded', sans-serif;
+  }
+  .card-dates { display: flex; gap: 12px; font-size: 12px; color: var(--muted); }
+  .date-item { display: flex; align-items: center; gap: 5px; }
+  .card-victory {
+    background: var(--surface2); border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 8px 10px; font-size: 13px; color: var(--text); line-height: 1.5; font-style: italic;
+  }
+  .card-result { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+  .card-result a { color: var(--accent2); text-decoration: none; font-size: 12px; }
+  .card-result a:hover { text-decoration: underline; }
+
+  .empty { text-align: center; padding: 4rem; color: var(--muted); grid-column: 1/-1; }
+  .empty p { font-size: 15px; margin-top: 1rem; }
+
+  .error-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 50vh; gap: 12px; color: var(--muted); padding: 2rem; text-align: center;
+  }
+  .error-screen .err-icon { font-size: 48px; }
+  .error-screen p { font-size: 14px; max-width: 400px; line-height: 1.6; }
+  .error-screen code { background: var(--surface2); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--accent); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    z-index: 100; align-items: center; justify-content: center; padding: 2rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius);
+    padding: 1.75rem; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative;
+  }
+  .modal h2 { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 1.25rem; padding-right: 2rem; }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--muted); cursor: pointer; padding: 4px 10px; font-size: 16px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-field { margin-bottom: 1rem; }
+  .modal-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); display: block; margin-bottom: 5px; }
+  .modal-field p { font-size: 14px; line-height: 1.6; }
+  .modal-field a { color: var(--accent2); font-size: 13px; word-break: break-all; }
+
+  .refresh-btn {
+    background: transparent; border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    color: var(--muted); font-family: 'Onest', sans-serif; font-size: 12px; padding: 5px 12px;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s, border-color 0.2s;
+  }
+  .refresh-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .header, .filters, .cards-area { padding-left: 1rem; padding-right: 1rem; }
+    .search-wrap input { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Task <span>Tracker</span></h1>
+    <p>Данные из Google Sheets · обновляется автоматически</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="last-updated">
+      <div class="dot-live"></div>
+      <span id="lastUpdated">Загрузка...</span>
+    </div>
+    <button class="refresh-btn" onclick="init()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+      Обновить
+    </button>
+  </div>
+</div>
+
+<div id="app"></div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?output=csv';
+
+let allData = [];
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const result = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i]);
+    if (cols.every(c => !c.trim())) continue;
+    result.push({
+      direction: cols[0] || '',
+      epic:      cols[1] || '',
+      who:       cols[2] || '',
+      status:    cols[3] || '',
+      dateStart: cols[4] || '',
+      dateEnd:   cols[5] || '',
+      victory:   cols[6] || '',
+      result:    cols[7] || '',
+    });
+  }
+  return result;
+}
+
+function splitCSVLine(line) {
+  const result = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++; } else { inQ = !inQ; } }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function statusClass(s) {
+  if (!s) return 's-default';
+  const l = s.toLowerCase();
+  if (l.includes('готов') || l.includes('выполн') || l.includes('done') || l.includes('завер') || l.includes('complete')) return 's-done';
+  if (l.includes('работ') || l.includes('прогресс') || l.includes('in progress') || l.includes('в работе') || l.includes('идёт')) return 's-progress';
+  if (l.includes('блок') || l.includes('block') || l.includes('стоп') || l.includes('пауз')) return 's-blocked';
+  if (l.includes('план') || l.includes('todo') || l.includes('очередь') || l.includes('новый') || l.includes('нов') || l.includes('старт')) return 's-todo';
+  return 's-default';
+}
+
+function cardAccent(s) {
+  const c = statusClass(s);
+  if (c === 's-done') return '#22c55e';
+  if (c === 's-progress') return '#f59e0b';
+  if (c === 's-blocked') return '#ef4444';
+  if (c === 's-todo') return '#6366f1';
+  return 'rgba(255,255,255,0.1)';
+}
+
+function initials(name) {
+  if (!name) return '?';
+  return name.trim().split(/[\s,]+/).slice(0,2).map(w => w[0] || '').join('').toUpperCase() || '?';
+}
+
+function unique(arr) { return [...new Set(arr.filter(Boolean))].sort(); }
+
+async function init() {
+  document.getElementById('app').innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Загружаем данные...</p></div>`;
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    allData = parseCSV(text);
+    if (allData.length === 0) throw new Error('Таблица пустая');
+    renderAll();
+    document.getElementById('lastUpdated').textContent = 'Обновлено ' + new Date().toLocaleTimeString('ru');
+  } catch(e) {
+    document.getElementById('app').innerHTML = `
+      <div class="error-screen">
+        <div class="err-icon">⚠️</div>
+        <p>Не удалось загрузить данные.<br>Убедитесь что таблица опубликована:<br>
+        <strong>Файл → Поделиться → Опубликовать в интернете → CSV</strong></p>
+        <p style="margin-top:8px;font-size:12px;opacity:0.6;">Ошибка: ${e.message}</p>
+        <button class="refresh-btn" onclick="init()" style="margin-top:16px;color:var(--accent);border-color:var(--accent);">Попробовать снова</button>
+      </div>`;
+  }
+}
+
+function renderAll() {
+  const total = allData.length;
+  const done = allData.filter(d => statusClass(d.status) === 's-done').length;
+  const inp = allData.filter(d => statusClass(d.status) === 's-progress').length;
+  const todo = allData.filter(d => statusClass(d.status) === 's-todo').length;
+
+  const dirs = unique(allData.map(d => d.direction));
+  const statuses = unique(allData.map(d => d.status));
+  const whos = unique(allData.map(d => d.who));
+
+  document.getElementById('app').innerHTML = `
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Всего задач</div><div class="metric-value mv-accent">${total}</div></div>
+      <div class="metric"><div class="metric-label">Выполнено</div><div class="metric-value mv-done">${done}</div></div>
+      <div class="metric"><div class="metric-label">В работе</div><div class="metric-value mv-progress">${inp}</div></div>
+      <div class="metric"><div class="metric-label">В очереди</div><div class="metric-value mv-todo">${todo}</div></div>
+      <div class="metric"><div class="metric-label">Выполнено %</div><div class="metric-value mv-done">${total ? Math.round(done/total*100) : 0}%</div></div>
+    </div>
+    <div class="filters">
+      <span class="filter-label">Фильтр:</span>
+      <select id="filterDir" onchange="applyFilters()">
+        <option value="">Все направления</option>
+        ${dirs.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join('')}
+      </select>
+      <select id="filterStatus" onchange="applyFilters()">
+        <option value="">Все статусы</option>
+        ${statuses.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('')}
+      </select>
+      <select id="filterWho" onchange="applyFilters()">
+        <option value="">Все исполнители</option>
+        ${whos.map(w => `<option value="${esc(w)}">${esc(w)}</option>`).join('')}
+      </select>
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
+      </div>
+    </div>
+    <div class="cards-area">
+      <div class="results-count" id="resultsCount"></div>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+  `;
+  applyFilters();
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function applyFilters() {
+  const dir = document.getElementById('filterDir').value;
+  const status = document.getElementById('filterStatus').value;
+  const who = document.getElementById('filterWho').value;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+
+  const filtered = allData.filter(d => {
+    if (dir && d.direction !== dir) return false;
+    if (status && d.status !== status) return false;
+    if (who && d.who !== who) return false;
+    if (q && ![d.direction,d.epic,d.who,d.status,d.victory,d.result].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('resultsCount').innerHTML = `Показано <strong>${filtered.length}</strong> из ${allData.length} задач`;
+  renderCards(filtered);
+}
+
+function renderCards(data) {
+  const grid = document.getElementById('cardsGrid');
+  if (data.length === 0) {
+    grid.innerHTML = `<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>Ничего не найдено</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map((d, i) => {
+    const idx = allData.indexOf(d);
+    const sc = statusClass(d.status);
+    const isLink = d.result && (d.result.startsWith('http://') || d.result.startsWith('https://'));
+    return `<div class="card" style="--card-accent:${cardAccent(d.status)};animation-delay:${Math.min(i*25,300)}ms" onclick="openModal(${idx})">
+      <div class="card-top">
+        ${d.direction ? `<span class="card-direction">${esc(d.direction)}</span>` : '<span></span>'}
+        ${d.status ? `<span class="status-badge ${sc}">${esc(d.status)}</span>` : ''}
+      </div>
+      <div class="card-epic">${esc(d.epic) || '—'}</div>
+      ${d.who ? `<div class="card-who"><div class="avatar">${esc(initials(d.who))}</div>${esc(d.who)}</div>` : ''}
+      ${(d.dateStart || d.dateEnd) ? `<div class="card-dates">
+        ${d.dateStart ? `<div class="date-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>${esc(d.dateStart)}</div>` : ''}
+        ${d.dateEnd ? `<div class="date-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>${esc(d.dateEnd)}</div>` : ''}
+      </div>` : ''}
+      ${d.victory ? `<div class="card-victory">🏆 ${esc(d.victory)}</div>` : ''}
+      ${d.result ? `<div class="card-result">${isLink ? `<a href="${esc(d.result)}" target="_blank" onclick="event.stopPropagation()">Смотреть результат →</a>` : esc(d.result)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openModal(idx) {
+  const d = allData[idx];
+  const sc = statusClass(d.status);
+  const isLink = d.result && (d.result.startsWith('http://') || d.result.startsWith('https://'));
+  document.getElementById('modalBody').innerHTML = `
+    <h2>${esc(d.epic) || 'Задача'}</h2>
+    ${d.direction ? `<div class="modal-field"><label>Направление</label><p>${esc(d.direction)}</p></div>` : ''}
+    ${d.status ? `<div class="modal-field"><label>Статус</label><p><span class="status-badge ${sc}">${esc(d.status)}</span></p></div>` : ''}
+    ${d.who ? `<div class="modal-field"><label>Исполнитель</label><p>${esc(d.who)}</p></div>` : ''}
+    ${(d.dateStart || d.dateEnd) ? `<div class="modal-field"><label>Сроки</label><p>${[d.dateStart,d.dateEnd].filter(Boolean).map(esc).join(' → ')}</p></div>` : ''}
+    ${d.victory ? `<div class="modal-field"><label>Текст победы</label><p>${esc(d.victory)}</p></div>` : ''}
+    ${d.result ? `<div class="modal-field"><label>Результаты работы</label>${isLink ? `<a href="${esc(d.result)}" target="_blank">${esc(d.result)}</a>` : `<p>${esc(d.result)}</p>`}</div>` : ''}
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalBtn(); });
+
+init();
+</script>
+</body>
+</html>
