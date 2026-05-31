@@ -185,6 +185,41 @@
 
   .empty-col { background: var(--white); border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 1.5rem; text-align: center; font-size: 12px; color: var(--muted); font-style: italic; }
 
+  /* MISSING SECTION */
+  .missing-section {
+    margin: 0 2rem 1.25rem;
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  .missing-header {
+    padding: 0.9rem 1.25rem; background: var(--light); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  .missing-title { font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: var(--text); }
+  .missing-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .missing-ok-badge { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; background: var(--done-tag-bg); color: var(--done-tag); white-space: nowrap; }
+  .missing-warn-badge { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; background: var(--paused-tag-bg); color: var(--paused-tag); white-space: nowrap; }
+  .missing-body { padding: 1rem 1.25rem; }
+  .missing-ok { font-size: 13px; color: var(--done-accent); padding: 0.5rem 0; }
+  .missing-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .missing-col { border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .missing-col-head { display: flex; align-items: center; gap: 8px; padding: 0.6rem 0.9rem; background: var(--light); border-bottom: 0.5px solid var(--border); }
+  .missing-col-icon { font-size: 14px; }
+  .missing-col-title { font-size: 12px; font-weight: 500; color: var(--text); flex: 1; }
+  .missing-count { font-size: 11px; background: var(--paused-tag-bg); color: var(--paused-tag); border-radius: 12px; padding: 1px 8px; font-weight: 500; }
+  .missing-list { padding: 0.5rem 0; max-height: 260px; overflow-y: auto; }
+  .missing-item { display: flex; align-items: center; gap: 8px; padding: 6px 0.9rem; border-bottom: 0.5px solid var(--border); }
+  .missing-item:last-child { border-bottom: none; }
+  .missing-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--paused-tag-bg); color: var(--paused-tag); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; font-family: 'Unbounded', sans-serif; flex-shrink: 0; }
+  .missing-dir-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--paused-accent); flex-shrink: 0; margin: 0 9px; }
+  .missing-name { font-size: 13px; color: var(--text); flex: 1; }
+  .missing-last { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .missing-none { padding: 0.75rem 0.9rem; font-size: 12px; color: var(--done-accent); font-style: italic; }
+
+  @media(max-width:560px) {
+    .missing-section { margin-left: 1rem; margin-right: 1rem; }
+    .missing-cols { grid-template-columns: 1fr; }
+  }
+
   /* COPY BOX */
   .copy-section {
     margin: 0 2rem 2rem;
@@ -285,6 +320,7 @@
 
 <div id="metricsRow"></div>
 <div id="app"></div>
+<div id="missingSection"></div>
 <div id="copySection"></div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -374,6 +410,7 @@ async function init() {
   document.getElementById('app').innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Загружаем данные...</p></div>`;
   document.getElementById('metricsRow').innerHTML='';
   document.getElementById('copySection').innerHTML='';
+  document.getElementById('missingSection').innerHTML='';
   document.getElementById('weekBar').style.display='none';
   document.getElementById('toolbarRow').style.display='none';
   try {
@@ -501,7 +538,93 @@ function renderAll(data) {
   html += '</div>';
   document.getElementById('app').innerHTML = html;
 
+  renderMissing(data);
   renderCopyBox(groups);
+}
+
+function renderMissing(weekData) {
+  // All people and directions ever seen across ALL data
+  const allPeople = unique(allData.map(d => d.who).filter(Boolean));
+  const allDirs   = unique(allData.map(d => d.direction).filter(Boolean));
+
+  // People and directions present in the current filtered (week) data
+  const activePeople = new Set(weekData.map(d => d.who).filter(Boolean));
+  const activeDirs   = new Set(weekData.map(d => d.direction).filter(Boolean));
+
+  const missingPeople = allPeople.filter(p => !activePeople.has(p));
+  const missingDirs   = allDirs.filter(d => !activeDirs.has(d));
+
+  // If nothing missing — show green status
+  const allOk = missingPeople.length === 0 && missingDirs.length === 0;
+
+  const weekNote = selectedWeek !== 'all'
+    ? `за неделю <strong>${weekLabel(selectedWeek)}</strong>`
+    : 'за выбранный период';
+
+  let html = `<div class="missing-section">
+    <div class="missing-header">
+      <div>
+        <h2 class="missing-title">🔍 Контроль охвата</h2>
+        <p class="missing-sub">Кто не прислал итоги ${weekNote}</p>
+      </div>
+      ${allOk ? `<span class="missing-ok-badge">✓ Все заполнили</span>` : `<span class="missing-warn-badge">⚠ Есть пропуски</span>`}
+    </div>
+    <div class="missing-body">`;
+
+  if (allOk) {
+    html += `<div class="missing-ok">Все сотрудники и направления представлены за выбранный период.</div>`;
+  } else {
+    html += `<div class="missing-cols">`;
+
+    // Missing people
+    html += `<div class="missing-col">
+      <div class="missing-col-head">
+        <span class="missing-col-icon">👤</span>
+        <span class="missing-col-title">Не написали итоги</span>
+        <span class="missing-count">${missingPeople.length}</span>
+      </div>
+      <div class="missing-list">`;
+    if (missingPeople.length === 0) {
+      html += `<div class="missing-none">Все сотрудники отчитались</div>`;
+    } else {
+      missingPeople.forEach(p => {
+        const lastSeen = allData.filter(d => d.who === p).map(d => d.dateEnd || d.dateStart).filter(Boolean).sort().pop() || '';
+        html += `<div class="missing-item">
+          <div class="missing-avatar">${esc(initials(p))}</div>
+          <div class="missing-name">${esc(p)}</div>
+          ${lastSeen ? `<div class="missing-last">последний раз: ${esc(lastSeen)}</div>` : ''}
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+
+    // Missing directions
+    html += `<div class="missing-col">
+      <div class="missing-col-head">
+        <span class="missing-col-icon">📂</span>
+        <span class="missing-col-title">Нет итогов по направлениям</span>
+        <span class="missing-count">${missingDirs.length}</span>
+      </div>
+      <div class="missing-list">`;
+    if (missingDirs.length === 0) {
+      html += `<div class="missing-none">По всем направлениям есть итоги</div>`;
+    } else {
+      missingDirs.forEach(dir => {
+        const count = allData.filter(d => d.direction === dir).length;
+        html += `<div class="missing-item">
+          <div class="missing-dir-dot"></div>
+          <div class="missing-name">${esc(dir)}</div>
+          <div class="missing-last">${count} задач всего</div>
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+
+    html += `</div>`; // missing-cols
+  }
+
+  html += `</div></div>`;
+  document.getElementById('missingSection').innerHTML = html;
 }
 
 function renderCopyBox(groups) {
@@ -534,15 +657,17 @@ function renderCopyBox(groups) {
       text += `\n*${dir}*\n`;
       byDir[dir].forEach(t => {
         if (key === 'releases') {
-          // For releases: show victory (or epic), then responsible
-          const content = (t.victory && t.victory.trim()) ? t.victory : t.epic;
+          // For releases: epic name, then victory text, then responsible
           const who = t.who ? ` — ${t.who}` : '';
-          text += `${content}${who}\n`;
-        } else {
+          text += `${t.epic || '—'}${who}\n`;
           if (t.victory && t.victory.trim()) {
-            text += `${t.victory}\n`;
-          } else if (t.epic) {
-            text += `${t.epic}\n`;
+            text += `  ${t.victory}\n`;
+          }
+        } else {
+          // Epic name first, then victory text on next line if exists
+          text += `${t.epic || '—'}\n`;
+          if (t.victory && t.victory.trim()) {
+            text += `  ${t.victory}\n`;
           }
         }
       });
