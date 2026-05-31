@@ -128,8 +128,7 @@
   .dstat-part { background: var(--partial-tag-bg); color: var(--partial-tag); }
   .dir-block-total { font-size: 11px; color: var(--muted); white-space: nowrap; }
   .dir-block-body { border-top: 1px solid var(--border); padding: 0.85rem 1rem; }
-  .dir-columns { display: flex; flex-direction: column; gap: 8px; }
-  .dir-col { }
+  .dir-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; }
   .dir-col-head {
     display: flex; align-items: center; gap: 7px; padding: 5px 8px;
     border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -243,6 +242,33 @@
     display: inline-flex; align-items: center; justify-content: center;
   }
   .tab-content { }
+
+  /* STAFF TAB */
+  .staff-section { padding: 1.25rem 2rem 2rem; }
+  .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 1rem; }
+  .staff-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 8px;
+    transition: box-shadow 0.15s;
+  }
+  .staff-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.07); }
+  .staff-card-top { display: flex; align-items: center; gap: 10px; }
+  .staff-avatar-lg {
+    width: 38px; height: 38px; border-radius: 50%; background: var(--release-tag-bg); color: var(--release-tag);
+    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+    font-family: 'Unbounded', sans-serif; flex-shrink: 0;
+  }
+  .staff-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .staff-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .staff-chip { font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+  .staff-chip-rel { background: var(--release-tag-bg); color: var(--release-tag); }
+  .staff-chip-done { background: var(--done-tag-bg); color: var(--done-tag); }
+  .staff-chip-part { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .staff-score { font-size: 11px; color: var(--muted); }
+  .staff-score strong { color: var(--text); font-size: 13px; }
+  .staff-no-data { font-size: 12px; color: var(--muted); font-style: italic; }
+  .staff-section-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
+  .staff-section-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
 
   /* MISSING SECTION */
   .missing-section {
@@ -369,22 +395,15 @@
   <div class="week-tabs" id="weekTabs"></div>
 </div>
 
-<div id="toolbarRow" style="display:none" class="toolbar">
-  <span class="filter-label">Направление:</span>
-  <select id="filterDir" onchange="applyFilters()"><option value="">Все</option></select>
-  <span class="filter-label">Исполнитель:</span>
-  <select id="filterWho" onchange="applyFilters()"><option value="">Все</option></select>
-  <div class="search-wrap">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
-  </div>
-</div>
-
 <!-- TAB NAV -->
 <div class="tab-nav" id="tabNav" style="display:none;">
   <button class="tab-btn active" onclick="switchTab('data')" id="tab-data">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
     Данные
+  </button>
+  <button class="tab-btn" onclick="switchTab('staff')" id="tab-staff">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Сотрудники
   </button>
   <button class="tab-btn" onclick="switchTab('missing')" id="tab-missing">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
@@ -397,9 +416,23 @@
   </button>
 </div>
 
+<div id="toolbarRow" style="display:none" class="toolbar">
+  <span class="filter-label">Направление:</span>
+  <select id="filterDir" onchange="applyFilters()"><option value="">Все</option></select>
+  <span class="filter-label">Исполнитель:</span>
+  <select id="filterWho" onchange="applyFilters()"><option value="">Все</option></select>
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Поиск..." oninput="applyFilters()" />
+  </div>
+</div>
+
 <div id="metricsRow"></div>
 <div id="tab-content-data" class="tab-content">
   <div id="app"></div>
+</div>
+<div id="tab-content-staff" class="tab-content" style="display:none;">
+  <div id="staffSection"></div>
 </div>
 <div id="tab-content-missing" class="tab-content" style="display:none;">
   <div id="missingSection"></div>
@@ -500,6 +533,7 @@ async function init() {
   document.getElementById('metricsRow').innerHTML='';
   document.getElementById('copySection').innerHTML='';
   document.getElementById('missingSection').innerHTML='';
+  document.getElementById('staffSection').innerHTML='';
   document.getElementById('weekBar').style.display='none';
   document.getElementById('toolbarRow').style.display='none';
   document.getElementById('tabNav').style.display='none';
@@ -541,7 +575,7 @@ async function init() {
 
     document.getElementById('toolbarRow').style.display='flex';
     document.getElementById('tabNav').style.display='flex';
-    if (weeks.length > 1) document.getElementById('weekBar').style.display='flex';
+    document.getElementById('weekBar').style.display='flex';
     document.getElementById('lastUpdated').textContent = 'Обновлено '+new Date().toLocaleTimeString('ru');
     updateWeekLabel();
   } catch(e) {
@@ -552,13 +586,14 @@ async function init() {
 let activeTab = 'data';
 function switchTab(tab) {
   activeTab = tab;
-  ['data','missing','messenger'].forEach(t => {
+  ['data','staff','missing','messenger'].forEach(t => {
     document.getElementById('tab-content-'+t).style.display = t === tab ? 'block' : 'none';
     document.getElementById('tab-'+t).classList.toggle('active', t === tab);
   });
   // Toolbar only visible on data tab
   document.getElementById('toolbarRow').style.display = tab === 'data' ? 'flex' : 'none';
   document.getElementById('metricsRow').style.display = tab === 'data' ? '' : 'none';
+  if (tab === 'staff') renderStaffTab();
 }
 
 function buildWeekTabs() {
@@ -576,6 +611,7 @@ function selectWeek(w, el) {
   el.classList.add('active');
   updateWeekLabel();
   applyFilters();
+  if (activeTab === 'staff') renderStaffTab();
 }
 
 function updateWeekLabel() {
@@ -824,6 +860,71 @@ function renderTop5() {
       <div class="top5-col">${renderList(weekTop, selectedWeek==='all' ? '📅 Все время (текущий фильтр)' : `📅 Неделя ${weekLabel(selectedWeek)}`)}</div>
       <div class="top5-col">${renderList(allTop, '🗓 За всё время')}</div>
     </div>`;
+}
+
+function renderStaffTab() {
+  const el = document.getElementById('staffSection');
+  if (!el) return;
+
+  // Get current week filter
+  let weekData = allData.filter(d => {
+    if (selectedWeek !== 'all') { const w = extractWeek(d); return w === selectedWeek; }
+    return true;
+  });
+
+  // Build per-person stats for current week
+  const allPeople = masterStaff.length ? masterStaff : unique(allData.map(d=>d.who).filter(Boolean));
+
+  const weekLabel_ = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : 'Все недели';
+
+  const peopleStats = allPeople.map(name => {
+    const tasks = weekData.filter(d => d.who === name);
+    const rel  = tasks.filter(t => categorize(t) === 'releases').length;
+    const done = tasks.filter(t => categorize(t) === 'done').length;
+    const part = tasks.filter(t => categorize(t) === 'partial').length;
+    const score = rel*3 + done*2 + part*1;
+    const dirs = unique(tasks.map(t=>t.direction).filter(Boolean));
+    return { name, tasks: tasks.length, rel, done, part, score, dirs };
+  }).sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+
+  const avatarColors = [
+    ['var(--release-tag-bg)','var(--release-tag)'],
+    ['var(--done-tag-bg)','var(--done-tag)'],
+    ['var(--partial-tag-bg)','var(--partial-tag)'],
+    ['var(--paused-tag-bg)','var(--paused-tag)'],
+  ];
+
+  let html = `<div class="staff-section">
+    <div class="staff-section-title">👤 Сотрудники</div>
+    <div class="staff-section-sub">${weekLabel_} · ${peopleStats.filter(p=>p.tasks>0).length} из ${allPeople.length} сотрудников активны</div>
+    <div class="staff-grid">`;
+
+  peopleStats.forEach((p, i) => {
+    const [bg, fg] = avatarColors[i % avatarColors.length];
+    html += `<div class="staff-card">
+      <div class="staff-card-top">
+        <div class="staff-avatar-lg" style="background:${bg};color:${fg};">${esc(initials(p.name))}</div>
+        <div>
+          <div class="staff-name">${esc(p.name)}</div>
+          ${p.dirs.length ? `<div style="font-size:11px;color:var(--muted);">${p.dirs.slice(0,2).map(esc).join(', ')}${p.dirs.length>2?` +${p.dirs.length-2}`:''}</div>` : ''}
+        </div>
+      </div>`;
+
+    if (p.tasks > 0) {
+      html += `<div class="staff-chips">
+        ${p.rel  ? `<span class="staff-chip staff-chip-rel">🚀 ${p.rel} релиз${p.rel>1?'а':''}</span>` : ''}
+        ${p.done ? `<span class="staff-chip staff-chip-done">✅ ${p.done} выполн.</span>` : ''}
+        ${p.part ? `<span class="staff-chip staff-chip-part">🔄 ${p.part} в работе</span>` : ''}
+      </div>
+      <div class="staff-score">Вклад: <strong>${p.score}</strong> очков · ${p.tasks} задач</div>`;
+    } else {
+      html += `<div class="staff-no-data">Нет задач за период</div>`;
+    }
+    html += `</div>`;
+  });
+
+  html += `</div></div>`;
+  el.innerHTML = html;
 }
 
 function renderMissing(weekData) {
