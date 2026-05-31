@@ -302,12 +302,12 @@ const SECTIONS = [
 ];
 
 function categorize(d) {
-  const s = (d.status||'').toLowerCase();
+  const s = (d.status||'').toLowerCase().trim();
   const e = (d.epic||'').toLowerCase();
   if (s.includes('релиз')||s.includes('release')||e.includes('релиз')||e.includes('release')) return 'releases';
   if (s.includes('пауз')||s.includes('приост')||s.includes('стоп')||s.includes('заморож')||s.includes('блок')||s.includes('block')) return 'paused';
+  if (s === 'выполняется' || s.includes('выполняется') || s.includes('в процессе') || s.includes('работ')||s.includes('прогресс')||s.includes('in progress')||s.includes('промеж')||s.includes('частичн')) return 'partial';
   if (s.includes('готов')||s.includes('выполн')||s.includes('done')||s.includes('завер')||s.includes('complete')) return 'done';
-  if (s.includes('работ')||s.includes('прогресс')||s.includes('in progress')||s.includes('промеж')||s.includes('частичн')) return 'partial';
   if (d.victory && d.victory.trim()) return 'partial';
   return 'done';
 }
@@ -501,15 +501,18 @@ function renderCopyBox(groups) {
   const now = new Date();
   let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
-  const emojis = {releases:'🚀',done:'✅',paused:'⏸️',partial:'🔄'};
-  const titles = {releases:'РЕЛИЗЫ',done:'ВЫПОЛНЕННЫЕ ЗАДАЧИ',paused:'ПРИОСТАНОВЛЕННЫЕ ЗАДАЧИ',partial:'ЗАДАЧИ С ПРОМЕЖУТОЧНЫМИ РЕЗУЛЬТАТАМИ'};
+  const emojis = {done:'✅',releases:'🚀',paused:'⏸️',partial:'🔄'};
+  const titles = {done:'ВЫПОЛНЕННЫЕ ЗАДАЧИ',releases:'РЕЛИЗЫ',paused:'ПРИОСТАНОВЛЕННЫЕ ЗАДАЧИ',partial:'ЗАДАЧИ С ПРОМЕЖУТОЧНЫМИ РЕЗУЛЬТАТАМИ'};
+
+  // Order: done first, then releases, then paused, then partial
+  const ORDER = ['done','releases','paused','partial'];
 
   let text = `📊 Результаты за неделю (${dateStr})\n`;
 
-  SECTIONS.forEach(sec => {
-    const tasks = groups[sec.key];
+  ORDER.forEach(key => {
+    const tasks = groups[key];
     if (!tasks.length) return;
-    text += `\n${emojis[sec.key]} ${titles[sec.key]}\n`;
+    text += `\n${emojis[key]} ${titles[key]}\n`;
 
     // Group by direction within section
     const byDir = {};
@@ -523,10 +526,17 @@ function renderCopyBox(groups) {
     dirOrder.forEach(dir => {
       text += `\n*${dir}*\n`;
       byDir[dir].forEach(t => {
-        if (t.victory && t.victory.trim()) {
-          text += `${t.victory}\n`;
-        } else if (t.epic) {
-          text += `${t.epic}\n`;
+        if (key === 'releases') {
+          // For releases: show victory (or epic), then responsible
+          const content = (t.victory && t.victory.trim()) ? t.victory : t.epic;
+          const who = t.who ? ` — ${t.who}` : '';
+          text += `${content}${who}\n`;
+        } else {
+          if (t.victory && t.victory.trim()) {
+            text += `${t.victory}\n`;
+          } else if (t.epic) {
+            text += `${t.epic}\n`;
+          }
         }
       });
     });
@@ -536,8 +546,8 @@ function renderCopyBox(groups) {
     <div class="copy-section">
       <div class="copy-header">
         <div class="copy-header-left">
-          <h2>📋 Текст для мессенджера</h2>
-          <p>Скопируйте и вставьте в Telegram или WhatsApp</p>
+          <h2>📋 Текст для канала УБТ_official</h2>
+          <p>Скопируйте и вставьте в Telegram-канал <strong>УБТ_official</strong></p>
         </div>
         <button class="btn-copy" id="copyBtn" onclick="copyText()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
