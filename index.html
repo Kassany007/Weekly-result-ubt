@@ -203,6 +203,13 @@
   }
   .btn-copy:hover { opacity: 0.82; }
   .btn-copy.copied { background: var(--done-accent); }
+  .btn-ai {
+    background: var(--partial-tag-bg); border: 1px solid var(--partial-border); border-radius: var(--radius-sm);
+    color: var(--partial-accent); font-family: 'Onest', sans-serif; font-size: 12px; font-weight: 500;
+    padding: 7px 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-ai:hover:not(:disabled) { background: var(--partial-accent); color: #fff; border-color: var(--partial-accent); }
+  .spinner-sm { width: 14px; height: 14px; border: 2px solid var(--partial-border); border-top-color: var(--partial-accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
   .copy-text {
     padding: 1.1rem 1.25rem; font-size: 13px; line-height: 1.9; color: var(--text);
     white-space: pre-wrap; word-break: break-word; max-height: 300px; overflow-y: auto;
@@ -542,6 +549,9 @@ function renderCopyBox(groups) {
     });
   });
 
+  // Store raw text for AI processing
+  window._rawReportText = text;
+
   document.getElementById('copySection').innerHTML=`
     <div class="copy-section">
       <div class="copy-header">
@@ -549,13 +559,79 @@ function renderCopyBox(groups) {
           <h2>📋 Текст для канала УБТ_official</h2>
           <p>Скопируйте и вставьте в Telegram-канал <strong>УБТ_official</strong></p>
         </div>
-        <button class="btn-copy" id="copyBtn" onclick="copyText()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Скопировать
-        </button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn-ai" id="aiBtn" onclick="reformulateWithAI()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><circle cx="18" cy="5" r="3"/></svg>
+            ✨ Улучшить текст
+          </button>
+          <button class="btn-copy" id="copyBtn" onclick="copyText()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Скопировать
+          </button>
+        </div>
+      </div>
+      <div id="aiStatus" style="display:none;padding:8px 1.25rem;font-size:12px;background:var(--partial-tag-bg);color:var(--partial-tag);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+        <div class="spinner-sm"></div><span>ИИ улучшает формулировки...</span>
       </div>
       <div class="copy-text" id="copyTextContent">${esc(text)}</div>
     </div>`;
+}
+
+async function reformulateWithAI() {
+  const raw = window._rawReportText;
+  if (!raw) return;
+
+  const aiBtn = document.getElementById('aiBtn');
+  const aiStatus = document.getElementById('aiStatus');
+  aiBtn.disabled = true;
+  aiBtn.style.opacity = '0.5';
+  aiStatus.style.display = 'flex';
+
+  const SYSTEM_PROMPT = `Ты редактор управленческих отчётов. Твоя задача — переформулировать текст результатов работы команды по строгим правилам.
+
+ПРАВИЛА СТИЛЯ:
+1. Используй прошедшее время: «провалидирован», «подготовлены БТ», «проведена встреча», «получены визы», «сформирован подход», «определен формат», «продолжена проработка».
+2. Избегай разговорных формулировок:
+   — «созвонились» → «проведена встреча» или «обсуждены вопросы»
+   — «документ расписан на коллег» → «документ направлен на согласование»
+   — «пока двигаемся» → «продолжена проработка»
+   — «поправили файл» → «актуализирован файл»
+3. Выделяй результат, а не процесс. Переписка и созвоны сами по себе не результат — указывай только если они привели к решению или согласованию.
+4. Сохраняй важные цифры и статусы.
+5. Объединяй дубли — если несколько пунктов об одном, объедини в один.
+6. Текст должен быть: деловым, компактным, без канцелярской перегрузки, без повторов, без оценочных суждений.
+7. Один пункт — 1–3 предложения. Используй маркированные списки внутри разделов.
+8. НЕ придумывай информацию, не добавляй результаты которых нет, не добавляй сроки, проценты, системы которых нет в тексте.
+9. Сохраняй структуру разделов и жирное выделение направлений (*текст*).
+10. Сохраняй эмодзи и заголовки разделов без изменений.
+11. Для релизов сохраняй имя ответственного в конце строки через тире.
+
+ВАЖНО: верни ТОЛЬКО готовый текст без пояснений и без markdown-блоков кода.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: `Переформулируй этот отчёт по правилам стиля:\n\n${raw}` }]
+      })
+    });
+    const data = await response.json();
+    const improved = data.content?.map(b => b.text || '').join('') || raw;
+    document.getElementById('copyTextContent').textContent = improved;
+    aiBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Улучшено`;
+    aiBtn.style.background = 'var(--done-accent)';
+    aiBtn.style.color = '#fff';
+  } catch(e) {
+    aiBtn.innerHTML = `✨ Улучшить текст`;
+    aiBtn.style.opacity = '1';
+    aiBtn.disabled = false;
+  } finally {
+    aiStatus.style.display = 'none';
+  }
 }
 
 function copyText() {
