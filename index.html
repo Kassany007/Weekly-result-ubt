@@ -775,20 +775,16 @@ function renderCopyBox(groups) {
           <p>Скопируйте и вставьте в Telegram-канал <strong>УБТ_official</strong></p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn-ai" disabled style="opacity:0.45;cursor:not-allowed;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><circle cx="18" cy="5" r="3"/></svg>
-            ✨ Улучшить текст
+          <button class="btn-ai" disabled style="opacity:0.5;cursor:not-allowed;background:var(--light);color:var(--muted);border-color:var(--border);">
+            ✨ Улучшить текст — в работе
           </button>
-          <span style="font-size:11px;color:var(--muted);font-style:italic;">в работе</span>
           <button class="btn-copy" id="copyBtn" onclick="copyText()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Скопировать
           </button>
         </div>
       </div>
-      <div id="aiStatus" style="display:none;padding:8px 1.25rem;font-size:12px;background:var(--partial-tag-bg);color:var(--partial-tag);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
-        <div class="spinner-sm"></div><span>ИИ улучшает формулировки...</span>
-      </div>
+      <div id="aiStatus" style="display:none;"></div>
       <div class="copy-text" id="copyTextContent">${esc(text)}</div>
     </div>`;
 }
