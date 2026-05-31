@@ -111,53 +111,92 @@
   .mv-amber { color: var(--paused-accent); }
   .mv-purple { color: var(--partial-accent); }
 
-  /* MAIN LAYOUT: 4 columns */
-  .columns-wrap {
-    padding: 1.25rem 2rem 2rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    align-items: start;
+  /* DIRECTION SECTIONS */
+  .dir-sections { padding: 1.25rem 2rem 0.5rem; display: flex; flex-direction: column; gap: 10px; }
+  .dir-block { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .dir-block-header {
+    display: flex; align-items: center; gap: 10px; padding: 0.85rem 1.1rem;
+    cursor: pointer; user-select: none; transition: background 0.15s;
+  }
+  .dir-block-header:hover { background: var(--light); }
+  .dir-block-arrow { font-size: 14px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+  .dir-block-name { font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: var(--text); flex: 1; }
+  .dir-block-stats { display: flex; gap: 6px; }
+  .dstat { font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+  .dstat-rel { background: var(--release-tag-bg); color: var(--release-tag); }
+  .dstat-done { background: var(--done-tag-bg); color: var(--done-tag); }
+  .dstat-part { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .dir-block-total { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .dir-block-body { border-top: 1px solid var(--border); padding: 0.85rem 1rem; }
+  .dir-columns { display: flex; flex-direction: column; gap: 8px; }
+  .dir-col { }
+  .dir-col-head {
+    display: flex; align-items: center; gap: 7px; padding: 5px 8px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    font-size: 11px; font-weight: 600; margin-bottom: 1px;
+  }
+  .dir-col-head.col-releases { background: var(--release-tag-bg); color: var(--release-tag); }
+  .dir-col-head.col-done { background: var(--done-tag-bg); color: var(--done-tag); }
+  .dir-col-head.col-partial { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .dir-col-title { flex: 1; }
+  .dir-col-count { opacity: 0.7; }
+
+  /* TOP-5 */
+  .top5-section {
+    margin: 1rem 2rem 1.5rem;
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  }
+  .top5-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.1rem; cursor: pointer; background: var(--light);
+    font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .top5-header:hover { background: var(--border); }
+  .top5-lock { font-size: 12px; color: var(--muted); font-family: 'Onest', sans-serif; font-weight: 400; }
+  .top5-pwd-wrap { padding: 1rem 1.25rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .top5-pwd-wrap input { width: 200px; }
+  .top5-pwd-wrap button { background: var(--text); color: var(--white); border: none; border-radius: var(--radius-sm); padding: 7px 16px; font-family: 'Onest', sans-serif; font-size: 13px; cursor: pointer; }
+  .top5-hint { font-size: 11px; color: var(--muted); padding: 0.75rem 1.25rem 0; }
+  .top5-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .top5-col { padding: 0.75rem 1.25rem 1.25rem; }
+  .top5-col:first-child { border-right: 1px solid var(--border); }
+  .top5-list-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .top5-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--border); }
+  .top5-row:last-child { border-bottom: none; }
+  .top5-medal { font-size: 16px; flex-shrink: 0; }
+  .top5-name { font-size: 13px; font-weight: 500; flex: 1; color: var(--text); }
+  .top5-chips { display: flex; gap: 4px; }
+  .top5-chip { font-size: 10px; padding: 1px 6px; border-radius: 10px; }
+  .top5-chip-rel { background: var(--release-tag-bg); color: var(--release-tag); }
+  .top5-chip-done { background: var(--done-tag-bg); color: var(--done-tag); }
+  .top5-chip-part { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .top5-score { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; min-width: 48px; text-align: right; }
+
+  @media(max-width:640px) {
+    .dir-sections { padding-left: 1rem; padding-right: 1rem; }
+    .top5-section { margin-left: 1rem; margin-right: 1rem; }
+    .top5-grid { grid-template-columns: 1fr; }
+    .top5-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
   }
 
-  /* COLUMN / SECTION */
-  .col { display: flex; flex-direction: column; gap: 10px; }
-  .col-header {
-    background: var(--white); border-radius: var(--radius); padding: 0.9rem 1rem;
-    border-top: 3px solid; display: flex; align-items: center; gap: 8px;
-    border-left: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  }
-  .col-releases .col-header { border-top-color: var(--release-accent); }
-  .col-done .col-header { border-top-color: var(--done-accent); }
-  .col-paused .col-header { border-top-color: var(--paused-accent); }
-  .col-partial .col-header { border-top-color: var(--partial-accent); }
+  /* TASK CARDS inside dir columns */
 
-  .col-icon { font-size: 17px; }
-  .col-title { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; flex: 1; line-height: 1.3; }
-  .col-releases .col-title { color: var(--release-accent); }
-  .col-done .col-title { color: var(--done-accent); }
-  .col-paused .col-title { color: var(--paused-accent); }
-  .col-partial .col-title { color: var(--partial-accent); }
-  .col-count { font-size: 11px; color: var(--muted); background: var(--light); border-radius: 12px; padding: 1px 8px; }
-
-  /* TASK CARD */
   .task-card {
-    background: var(--white); border-radius: var(--radius-sm);
-    border: 0.5px solid; padding: 0.85rem 0.9rem;
-    display: flex; flex-direction: column; gap: 7px;
+    background: var(--white); border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    border: 0.5px solid var(--border); padding: 0.75rem 0.85rem;
+    display: flex; flex-direction: column; gap: 6px;
     cursor: pointer; transition: box-shadow 0.15s, transform 0.12s;
-    animation: fadeUp 0.25s ease both;
+    animation: fadeUp 0.25s ease both; margin-bottom: 6px;
   }
-  .col-releases .task-card { border-color: var(--release-border); }
-  .col-releases .task-card:hover { box-shadow: 0 3px 14px rgba(47,108,196,0.1); transform: translateY(-1px); }
-  .col-done .task-card { border-color: var(--done-border); }
-  .col-done .task-card:hover { box-shadow: 0 3px 14px rgba(42,144,80,0.1); transform: translateY(-1px); }
-  .col-paused .task-card { border-color: var(--paused-border); }
-  .col-paused .task-card:hover { box-shadow: 0 3px 14px rgba(196,125,16,0.1); transform: translateY(-1px); }
-  .col-partial .task-card { border-color: var(--partial-border); }
-  .col-partial .task-card:hover { box-shadow: 0 3px 14px rgba(107,68,196,0.1); transform: translateY(-1px); }
-
-  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .task-card:last-child { margin-bottom: 0; }
+  .task-card.col-releases { border-color: var(--release-border); border-top: 2px solid var(--release-accent); }
+  .task-card.col-releases:hover { box-shadow: 0 2px 10px rgba(47,108,196,0.1); transform: translateX(2px); }
+  .task-card.col-done { border-color: var(--done-border); border-top: 2px solid var(--done-accent); }
+  .task-card.col-done:hover { box-shadow: 0 2px 10px rgba(42,144,80,0.1); transform: translateX(2px); }
+  .task-card.col-partial { border-color: var(--partial-border); border-top: 2px solid var(--partial-accent); }
+  .task-card.col-partial:hover { box-shadow: 0 2px 10px rgba(107,68,196,0.1); transform: translateX(2px); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
   .task-dir { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 12px; margin-bottom: 2px; }
   .col-releases .task-dir { background: var(--release-tag-bg); color: var(--release-tag); }
@@ -578,52 +617,213 @@ function renderAll(data) {
   const groups = {releases:[],done:[],paused:[],partial:[]};
   data.forEach(d => groups[categorize(d)].push(d));
 
-  // Metrics
+  // Metrics (3 categories, no paused)
   document.getElementById('metricsRow').innerHTML=`<div class="metrics">
-    <div class="metric"><span class="metric-icon">🚀</span><div><div class="metric-label">Релизы</div><div class="metric-value mv-blue">${groups.releases.length}</div></div></div>
-    <div class="metric"><span class="metric-icon">✅</span><div><div class="metric-label">Выполнено</div><div class="metric-value mv-green">${groups.done.length}</div></div></div>
-    <div class="metric"><span class="metric-icon">⏸️</span><div><div class="metric-label">Приостановлено</div><div class="metric-value mv-amber">${groups.paused.length}</div></div></div>
     <div class="metric"><span class="metric-icon">🔄</span><div><div class="metric-label">Промежуточные</div><div class="metric-value mv-purple">${groups.partial.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">✅</span><div><div class="metric-label">Выполнено</div><div class="metric-value mv-green">${groups.done.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">🚀</span><div><div class="metric-label">Релизы</div><div class="metric-value mv-blue">${groups.releases.length}</div></div></div>
+    <div class="metric"><span class="metric-icon">📋</span><div><div class="metric-label">Всего задач</div><div class="metric-value mv-amber">${data.length}</div></div></div>
   </div>`;
 
-  // Columns
-  let html = '<div class="columns-wrap">';
-  SECTIONS.forEach(sec => {
-    const tasks = groups[sec.key];
-    html += `<div class="col ${sec.cls}">
-      <div class="col-header">
-        <span class="col-icon">${sec.icon}</span>
-        <span class="col-title">${sec.title}</span>
-        <span class="col-count">${tasks.length}</span>
-      </div>`;
+  // Order: partial → done → releases (no paused)
+  const DISPLAY_ORDER = [
+    {key:'partial', cls:'col-partial', icon:'🔄', title:'Промежуточные результаты'},
+    {key:'done',    cls:'col-done',    icon:'✅', title:'Выполненные задачи'},
+    {key:'releases',cls:'col-releases',icon:'🚀', title:'Релизы'},
+  ];
 
-    if (!tasks.length) {
-      html += `<div class="empty-col">Нет задач</div>`;
-    } else {
+  // Group by direction, preserving order from masterDirs
+  const allDirOrder = masterDirs.length ? masterDirs : unique(data.map(d=>d.direction).filter(Boolean));
+
+  let html = '<div class="dir-sections">';
+
+  // Collect all directions that appear in filtered data
+  const dirsInData = unique(data.map(d=>d.direction).filter(Boolean));
+  const orderedDirs = [
+    ...allDirOrder.filter(d=>dirsInData.includes(d)),
+    ...dirsInData.filter(d=>!allDirOrder.includes(d))
+  ];
+  if (data.some(d=>!d.direction)) orderedDirs.push('');
+
+  orderedDirs.forEach((dir, gi) => {
+    const dirTasks = data.filter(d => d.direction === dir);
+    if (!dirTasks.length) return;
+
+    const dirGroups = {releases:[],done:[],paused:[],partial:[]};
+    dirTasks.forEach(d => dirGroups[categorize(d)].push(d));
+    const totalDir = dirTasks.length;
+    const doneCount = dirGroups.done.length + dirGroups.releases.length;
+
+    html += `<div class="dir-block" id="dirblock-${gi}">
+      <div class="dir-block-header" onclick="toggleDir('dirblock-${gi}')">
+        <div class="dir-block-arrow" id="dirarrow-${gi}">▾</div>
+        <div class="dir-block-name">${esc(dir||'Без направления')}</div>
+        <div class="dir-block-stats">
+          ${dirGroups.releases.length ? `<span class="dstat dstat-rel">🚀 ${dirGroups.releases.length}</span>` : ''}
+          ${dirGroups.done.length ? `<span class="dstat dstat-done">✅ ${dirGroups.done.length}</span>` : ''}
+          ${dirGroups.partial.length ? `<span class="dstat dstat-part">🔄 ${dirGroups.partial.length}</span>` : ''}
+        </div>
+        <div class="dir-block-total">${totalDir} задач</div>
+      </div>
+      <div class="dir-block-body" id="dirbody-${gi}">
+        <div class="dir-columns">`;
+
+    DISPLAY_ORDER.forEach(sec => {
+      const tasks = dirGroups[sec.key];
+      if (!tasks.length) return;
+      html += `<div class="dir-col">
+        <div class="dir-col-head ${sec.cls}">
+          <span>${sec.icon}</span>
+          <span class="dir-col-title">${sec.title}</span>
+          <span class="dir-col-count">${tasks.length}</span>
+        </div>`;
       tasks.forEach((t,i) => {
         const idx = allData.indexOf(t);
-        html += `<div class="task-card" style="animation-delay:${i*18}ms" onclick="openModal(${idx})">
-          ${t.direction?`<span class="task-dir">${esc(t.direction)}</span>`:''}
+        html += `<div class="task-card ${sec.cls}" style="animation-delay:${i*15}ms" onclick="openModal(${idx})">
           <div class="task-epic">${esc(t.epic)||'—'}</div>
           <div class="task-meta">
             ${t.who?`<div class="meta-who"><div class="avatar">${esc(initials(t.who))}</div>${esc(t.who)}</div>`:''}
-            ${(t.dateStart||t.dateEnd)?`<div class="meta-date">📅 ${[t.dateStart,t.dateEnd].filter(Boolean).map(esc).join('→')}</div>`:''}
-            ${t.result&&isLink(t.result)?`<a class="result-link" href="${esc(t.result)}" target="_blank" onclick="event.stopPropagation()">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              Результат
-            </a>`:''}
+            ${(t.dateStart||t.dateEnd)?`<div class="meta-date">📅 ${[t.dateStart,t.dateEnd].filter(Boolean).map(esc).join(' → ')}</div>`:''}
+            ${t.result&&isLink(t.result)?`<a class="result-link" href="${esc(t.result)}" target="_blank" onclick="event.stopPropagation()">↗ Результат</a>`:''}
           </div>
           ${t.victory?`<div class="victory-block">🏆 <span>${esc(t.victory)}</span></div>`:''}
         </div>`;
       });
-    }
-    html += '</div>';
+      html += '</div>';
+    });
+
+    html += `</div></div></div>`;
   });
   html += '</div>';
+
+  // TOP-5 section (password protected)
+  html += `<div class="top5-section">
+    <div class="top5-header" onclick="toggleTop5()">
+      <span>🏅 ТОП-5 сотрудников</span>
+      <span class="top5-lock" id="top5Lock">🔒 Показать</span>
+    </div>
+    <div id="top5Body" style="display:none;">
+      <div id="top5PwdWrap" class="top5-pwd-wrap">
+        <input type="password" id="top5Pwd" placeholder="Введите пароль..." onkeydown="if(event.key==='Enter')checkTop5Pwd()" />
+        <button onclick="checkTop5Pwd()">Войти</button>
+        <span id="top5PwdErr" style="font-size:11px;color:var(--blocked);display:none;">Неверный пароль</span>
+      </div>
+      <div id="top5Content" style="display:none;"></div>
+    </div>
+  </div>`;
+
   document.getElementById('app').innerHTML = html;
 
   renderMissing(data);
   renderCopyBox(groups);
+}
+
+function toggleDir(id) {
+  const body = document.getElementById('dirbody-' + id.replace('dirblock-',''));
+  const arrow = document.getElementById('dirarrow-' + id.replace('dirblock-',''));
+  const gi = id.replace('dirblock-','');
+  const bodyEl = document.getElementById('dirbody-'+gi);
+  const arrowEl = document.getElementById('dirarrow-'+gi);
+  if (!bodyEl) return;
+  const collapsed = bodyEl.style.display === 'none';
+  bodyEl.style.display = collapsed ? 'block' : 'none';
+  arrowEl.style.transform = collapsed ? 'rotate(0deg)' : 'rotate(-90deg)';
+}
+
+let top5Unlocked = false;
+function toggleTop5() {
+  const body = document.getElementById('top5Body');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (top5Unlocked) renderTop5();
+}
+
+function checkTop5Pwd() {
+  const val = document.getElementById('top5Pwd').value;
+  if (val === '31415') {
+    top5Unlocked = true;
+    document.getElementById('top5PwdWrap').style.display = 'none';
+    document.getElementById('top5Content').style.display = 'block';
+    document.getElementById('top5Lock').textContent = '🏅 Открыто';
+    renderTop5();
+  } else {
+    document.getElementById('top5PwdErr').style.display = 'inline';
+    setTimeout(()=>{ document.getElementById('top5PwdErr').style.display='none'; }, 2000);
+  }
+}
+
+function calcScore(tasks) {
+  // Releases=3, Done=2, Partial=1
+  return tasks.reduce((sum, t) => {
+    const cat = categorize(t);
+    if (cat === 'releases') return sum + 3;
+    if (cat === 'done') return sum + 2;
+    if (cat === 'partial') return sum + 1;
+    return sum;
+  }, 0);
+}
+
+function renderTop5() {
+  const el = document.getElementById('top5Content');
+  if (!el) return;
+
+  // Current week/filter data
+  const dir = document.getElementById('filterDir').value;
+  const who = document.getElementById('filterWho').value;
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let weekData = allData.filter(d => {
+    if (selectedWeek !== 'all') { const w = extractWeek(d); if (w !== selectedWeek) return false; }
+    if (dir && d.direction !== dir) return false;
+    if (q && ![d.direction,d.epic,d.who,d.status,d.victory,d.result].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // All-time (ignore week filter)
+  const allTimeData = allData;
+
+  function topList(dataset, label) {
+    const byWho = {};
+    dataset.filter(d=>d.who).forEach(d => {
+      if (!byWho[d.who]) byWho[d.who] = [];
+      byWho[d.who].push(d);
+    });
+    return Object.entries(byWho)
+      .map(([name, tasks]) => ({
+        name,
+        score: calcScore(tasks),
+        rel: tasks.filter(t=>categorize(t)==='releases').length,
+        done: tasks.filter(t=>categorize(t)==='done').length,
+        part: tasks.filter(t=>categorize(t)==='partial').length,
+      }))
+      .sort((a,b) => b.score - a.score)
+      .slice(0,5);
+  }
+
+  const weekTop = topList(weekData, 'Неделя');
+  const allTop  = topList(allTimeData, 'Все время');
+
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+
+  function renderList(list, title) {
+    if (!list.length) return `<div style="font-size:13px;color:var(--muted);padding:1rem;">Нет данных</div>`;
+    return `<div class="top5-list-title">${title}</div>` +
+    list.map((p,i) => `<div class="top5-row">
+      <span class="top5-medal">${medals[i]}</span>
+      <span class="top5-name">${esc(p.name)}</span>
+      <span class="top5-chips">
+        ${p.rel?`<span class="top5-chip top5-chip-rel">🚀 ${p.rel}</span>`:''}
+        ${p.done?`<span class="top5-chip top5-chip-done">✅ ${p.done}</span>`:''}
+        ${p.part?`<span class="top5-chip top5-chip-part">🔄 ${p.part}</span>`:''}
+      </span>
+      <span class="top5-score">${p.score} <span style="font-size:10px;color:var(--muted);">очков</span></span>
+    </div>`).join('');
+  }
+
+  el.innerHTML = `
+    <div class="top5-hint">Баллы: 🚀 Релиз = 3 · ✅ Выполнено = 2 · 🔄 Промежуточные = 1</div>
+    <div class="top5-grid">
+      <div class="top5-col">${renderList(weekTop, selectedWeek==='all' ? '📅 Все время (текущий фильтр)' : `📅 Неделя ${weekLabel(selectedWeek)}`)}</div>
+      <div class="top5-col">${renderList(allTop, '🗓 За всё время')}</div>
+    </div>`;
 }
 
 function renderMissing(weekData) {
@@ -775,8 +975,8 @@ function renderCopyBox(groups) {
           <p>Скопируйте и вставьте в Telegram-канал <strong>УБТ_official</strong></p>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button class="btn-ai" disabled style="opacity:0.5;cursor:not-allowed;background:var(--light);color:var(--muted);border-color:var(--border);">
-            ✨ Улучшить текст — в работе
+          <button class="btn-ai" id="aiBtn" onclick="reformulateWithAI()">
+            ✨ Улучшить текст
           </button>
           <button class="btn-copy" id="copyBtn" onclick="copyText()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -784,7 +984,9 @@ function renderCopyBox(groups) {
           </button>
         </div>
       </div>
-      <div id="aiStatus" style="display:none;"></div>
+      <div id="aiStatus" style="display:none; padding:8px 1.25rem; font-size:12px; background:var(--partial-tag-bg); color:var(--partial-tag); border-bottom:1px solid var(--border); align-items:center; gap:8px;">
+        <div class="spinner-sm"></div><span>ИИ улучшает формулировки...</span>
+      </div>
       <div class="copy-text" id="copyTextContent">${esc(text)}</div>
     </div>`;
 }
@@ -821,25 +1023,41 @@ async function reformulateWithAI() {
 ВАЖНО: верни ТОЛЬКО готовый текст без пояснений и без markdown-блоков кода.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-4821b0e9189c4655a80e48727ad0e6fb'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: `Переформулируй этот отчёт по правилам стиля:\n\n${raw}` }]
+        model: 'deepseek-chat',
+        max_tokens: 2000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `Переформулируй этот отчёт по правилам стиля:\n\n${raw}` }
+        ]
       })
     });
+
     const data = await response.json();
-    const improved = data.content?.map(b => b.text || '').join('') || raw;
+    if (data.error) throw new Error(data.error.message);
+    const improved = data.choices?.[0]?.message?.content || raw;
     document.getElementById('copyTextContent').textContent = improved;
+    window._rawReportText = improved;
+
     aiBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Улучшено`;
     aiBtn.style.background = 'var(--done-accent)';
     aiBtn.style.color = '#fff';
+    aiBtn.style.borderColor = 'var(--done-accent)';
+    aiBtn.style.opacity = '1';
+    aiBtn.disabled = false;
   } catch(e) {
+    alert('Ошибка DeepSeek: ' + e.message);
     aiBtn.innerHTML = `✨ Улучшить текст`;
     aiBtn.style.opacity = '1';
+    aiBtn.style.background = '';
+    aiBtn.style.color = '';
+    aiBtn.style.borderColor = '';
     aiBtn.disabled = false;
   } finally {
     aiStatus.style.display = 'none';
