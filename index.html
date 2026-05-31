@@ -331,11 +331,15 @@
 </div>
 
 <script>
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?output=csv';
+const CSV_URL      = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?output=csv';
+const STAFF_URL    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?gid=1595528029&single=true&output=csv';
+const DIRS_URL     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vREmS1nWXrvoERLDf6NSNW6mdxTfcsyX8wxMOYITZHnK38KfKSVlrjK6g60HxcLmgLVgrDIrJnC1Doe/pub?gid=1283613999&single=true&output=csv';
 
 let allData = [];
 let weeks = [];
 let selectedWeek = 'all';
+let masterStaff = [];   // full staff list from reference sheet
+let masterDirs  = [];   // full directions list from reference sheet
 
 const SECTIONS = [
   { key:'releases', cls:'col-releases', icon:'🚀', title:'Релизы' },
@@ -414,11 +418,31 @@ async function init() {
   document.getElementById('weekBar').style.display='none';
   document.getElementById('toolbarRow').style.display='none';
   try {
-    const res = await fetch(CSV_URL);
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    const text = await res.text();
+    // Load all three sources in parallel
+    const [mainRes, staffRes, dirsRes] = await Promise.all([
+      fetch(CSV_URL),
+      fetch(STAFF_URL).catch(() => null),
+      fetch(DIRS_URL).catch(() => null)
+    ]);
+
+    if (!mainRes.ok) throw new Error('HTTP '+mainRes.status);
+    const text = await mainRes.text();
     allData = parseCSV(text);
     if (!allData.length) throw new Error('Таблица пустая');
+
+    // Parse staff list (first column, skip header)
+    if (staffRes && staffRes.ok) {
+      const staffText = await staffRes.text();
+      masterStaff = staffText.trim().split('\n').slice(1)
+        .map(r => splitCSV(r)[0]).filter(Boolean).map(s => s.trim());
+    }
+
+    // Parse directions list (first column, skip header)
+    if (dirsRes && dirsRes.ok) {
+      const dirsText = await dirsRes.text();
+      masterDirs = dirsText.trim().split('\n').slice(1)
+        .map(r => splitCSV(r)[0]).filter(Boolean).map(s => s.trim());
+    }
 
     // Extract weeks
     const weekSet = new Set();
@@ -543,9 +567,9 @@ function renderAll(data) {
 }
 
 function renderMissing(weekData) {
-  // All people and directions ever seen across ALL data
-  const allPeople = unique(allData.map(d => d.who).filter(Boolean));
-  const allDirs   = unique(allData.map(d => d.direction).filter(Boolean));
+  // Use master lists if loaded, otherwise fall back to all data
+  const allPeople = masterStaff.length ? masterStaff : unique(allData.map(d => d.who).filter(Boolean));
+  const allDirs   = masterDirs.length  ? masterDirs  : unique(allData.map(d => d.direction).filter(Boolean));
 
   // People and directions present in the current filtered (week) data
   const activePeople = new Set(weekData.map(d => d.who).filter(Boolean));
@@ -588,11 +612,9 @@ function renderMissing(weekData) {
       html += `<div class="missing-none">Все сотрудники отчитались</div>`;
     } else {
       missingPeople.forEach(p => {
-        const lastSeen = allData.filter(d => d.who === p).map(d => d.dateEnd || d.dateStart).filter(Boolean).sort().pop() || '';
         html += `<div class="missing-item">
           <div class="missing-avatar">${esc(initials(p))}</div>
           <div class="missing-name">${esc(p)}</div>
-          ${lastSeen ? `<div class="missing-last">последний раз: ${esc(lastSeen)}</div>` : ''}
         </div>`;
       });
     }
@@ -610,11 +632,9 @@ function renderMissing(weekData) {
       html += `<div class="missing-none">По всем направлениям есть итоги</div>`;
     } else {
       missingDirs.forEach(dir => {
-        const count = allData.filter(d => d.direction === dir).length;
         html += `<div class="missing-item">
           <div class="missing-dir-dot"></div>
           <div class="missing-name">${esc(dir)}</div>
-          <div class="missing-last">${count} задач всего</div>
         </div>`;
       });
     }
