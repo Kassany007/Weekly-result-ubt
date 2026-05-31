@@ -243,32 +243,53 @@
   }
   .tab-content { }
 
-  /* STAFF TAB */
+  /* STAFF TAB — TOP-10 two columns */
   .staff-section { padding: 1.25rem 2rem 2rem; }
-  .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 1rem; }
-  .staff-card {
-    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 8px;
-    transition: box-shadow 0.15s;
-  }
-  .staff-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.07); }
-  .staff-card-top { display: flex; align-items: center; gap: 10px; }
-  .staff-avatar-lg {
-    width: 38px; height: 38px; border-radius: 50%; background: var(--release-tag-bg); color: var(--release-tag);
-    display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
-    font-family: 'Unbounded', sans-serif; flex-shrink: 0;
-  }
-  .staff-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; }
-  .staff-chips { display: flex; gap: 5px; flex-wrap: wrap; }
-  .staff-chip { font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+  .staff-top-hint { font-size: 11px; color: var(--muted); margin-bottom: 1rem; }
+  .staff-two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .staff-col-block { background: var(--white); padding: 1rem; }
+  .staff-col-title { font-family: 'Unbounded', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+  .staff-top-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .staff-top-row:last-child { border-bottom: none; }
+  .staff-top-medal { font-size: 18px; flex-shrink: 0; width: 28px; text-align: center; }
+  .staff-top-info { flex: 1; min-width: 0; }
+  .staff-top-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .staff-top-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+  .staff-top-score { text-align: right; flex-shrink: 0; }
+  .staff-top-pts { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); display: block; }
+  .staff-top-pts-label { font-size: 10px; color: var(--muted); }
+  .staff-chip { font-size: 10px; padding: 1px 6px; border-radius: 10px; }
   .staff-chip-rel { background: var(--release-tag-bg); color: var(--release-tag); }
   .staff-chip-done { background: var(--done-tag-bg); color: var(--done-tag); }
   .staff-chip-part { background: var(--partial-tag-bg); color: var(--partial-tag); }
-  .staff-score { font-size: 11px; color: var(--muted); }
-  .staff-score strong { color: var(--text); font-size: 13px; }
-  .staff-no-data { font-size: 12px; color: var(--muted); font-style: italic; }
-  .staff-section-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); }
-  .staff-section-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* DIR CHIPS */
+  .dir-chips-wrap { padding: 0.75rem 2rem 0; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .dir-chips-label { font-size: 12px; color: var(--muted); padding-top: 5px; white-space: nowrap; flex-shrink: 0; }
+  .dir-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .dir-chip {
+    font-size: 12px; padding: 4px 12px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--light); color: var(--muted);
+    font-family: 'Onest', sans-serif; transition: all 0.15s; white-space: nowrap;
+  }
+  .dir-chip:hover { border-color: var(--border2); color: var(--text); }
+  .dir-chip.active { background: var(--text); color: var(--white); border-color: var(--text); }
+
+  /* THREE COLUMNS */
+  .three-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding: 1rem 2rem 2rem; align-items: start; }
+  .three-col { }
+  .three-col-head {
+    display: flex; align-items: center; gap: 7px; padding: 8px 10px;
+    font-size: 11px; font-weight: 600; border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    margin: 0 5px;
+  }
+  .three-col-head.col-partial { background: var(--partial-tag-bg); color: var(--partial-tag); }
+  .three-col-head.col-done { background: var(--done-tag-bg); color: var(--done-tag); }
+  .three-col-head.col-releases { background: var(--release-tag-bg); color: var(--release-tag); }
+  .three-col-title { flex: 1; }
+  .three-col-count { opacity: 0.7; }
+  .three-col-empty { font-size: 12px; color: var(--muted); font-style: italic; padding: 10px 15px; }
+  .task-dir-tag { display: inline-block; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
 
   /* MISSING SECTION */
   .missing-section {
@@ -300,9 +321,15 @@
   .missing-last { font-size: 11px; color: var(--muted); white-space: nowrap; }
   .missing-none { padding: 0.75rem 0.9rem; font-size: 12px; color: var(--done-accent); font-style: italic; }
 
+  @media(max-width:700px) {
+    .three-cols { grid-template-columns: 1fr; padding: 0.75rem 1rem 1.5rem; }
+    .staff-two-cols { grid-template-columns: 1fr; }
+    .dir-chips-wrap { padding: 0.75rem 1rem 0; }
+  }
   @media(max-width:560px) {
     .missing-section { margin-left: 1rem; margin-right: 1rem; }
     .missing-cols { grid-template-columns: 1fr; }
+    .staff-section { padding-left: 1rem; padding-right: 1rem; }
   }
 
   /* COPY BOX */
@@ -417,8 +444,6 @@
 </div>
 
 <div id="toolbarRow" style="display:none" class="toolbar">
-  <span class="filter-label">Направление:</span>
-  <select id="filterDir" onchange="applyFilters()"><option value="">Все</option></select>
   <span class="filter-label">Исполнитель:</span>
   <select id="filterWho" onchange="applyFilters()"><option value="">Все</option></select>
   <div class="search-wrap">
@@ -624,14 +649,12 @@ function updateWeekLabel() {
 }
 
 function buildFilters() {
-  const dirs = unique(allData.map(d=>d.direction));
   const whos = unique(allData.map(d=>d.who));
-  document.getElementById('filterDir').innerHTML = '<option value="">Все направления</option>'+dirs.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');
   document.getElementById('filterWho').innerHTML = '<option value="">Все исполнители</option>'+whos.map(w=>`<option value="${esc(w)}">${esc(w)}</option>`).join('');
 }
 
 function applyFilters() {
-  const dir = document.getElementById('filterDir').value;
+  const dir = window._selectedDir || '';
   const who = document.getElementById('filterWho').value;
   const q = document.getElementById('searchInput').value.toLowerCase();
 
@@ -653,69 +676,50 @@ function renderAll(data) {
   const groups = {releases:[],done:[],paused:[],partial:[]};
   data.forEach(d => groups[categorize(d)].push(d));
 
-  // Metrics (3 categories, no paused)
-  document.getElementById('metricsRow').innerHTML=`<div class="metrics">
+  // Metrics: 3 cols only (no "total")
+  document.getElementById('metricsRow').innerHTML=`<div class="metrics metrics-3">
     <div class="metric"><span class="metric-icon">🔄</span><div><div class="metric-label">Промежуточные</div><div class="metric-value mv-purple">${groups.partial.length}</div></div></div>
     <div class="metric"><span class="metric-icon">✅</span><div><div class="metric-label">Выполнено</div><div class="metric-value mv-green">${groups.done.length}</div></div></div>
     <div class="metric"><span class="metric-icon">🚀</span><div><div class="metric-label">Релизы</div><div class="metric-value mv-blue">${groups.releases.length}</div></div></div>
-    <div class="metric"><span class="metric-icon">📋</span><div><div class="metric-label">Всего задач</div><div class="metric-value mv-amber">${data.length}</div></div></div>
   </div>`;
 
-  // Order: partial → done → releases (no paused)
+  // Direction chips filter
+  const allDirs = masterDirs.length ? masterDirs : unique(allData.map(d=>d.direction).filter(Boolean));
+  const currentDir = window._selectedDir || '';
+  let chipsHtml = `<div class="dir-chips-wrap">
+    <span class="dir-chips-label">Направление:</span>
+    <div class="dir-chips">
+      <button class="dir-chip${!currentDir?' active':''}" onclick="setDirFilter('')">Все</button>`;
+  allDirs.forEach(d => {
+    chipsHtml += `<button class="dir-chip${currentDir===d?' active':''}" onclick="setDirFilter('${d.replace(/'/g,"\\'")}')">
+      ${esc(d)}
+    </button>`;
+  });
+  chipsHtml += `</div></div>`;
+
+  // 3 columns: partial / done / releases — flat list, no direction grouping
   const DISPLAY_ORDER = [
     {key:'partial', cls:'col-partial', icon:'🔄', title:'Промежуточные результаты'},
     {key:'done',    cls:'col-done',    icon:'✅', title:'Выполненные задачи'},
     {key:'releases',cls:'col-releases',icon:'🚀', title:'Релизы'},
   ];
 
-  // Group by direction, preserving order from masterDirs
-  const allDirOrder = masterDirs.length ? masterDirs : unique(data.map(d=>d.direction).filter(Boolean));
-
-  let html = '<div class="dir-sections">';
-
-  // Collect all directions that appear in filtered data
-  const dirsInData = unique(data.map(d=>d.direction).filter(Boolean));
-  const orderedDirs = [
-    ...allDirOrder.filter(d=>dirsInData.includes(d)),
-    ...dirsInData.filter(d=>!allDirOrder.includes(d))
-  ];
-  if (data.some(d=>!d.direction)) orderedDirs.push('');
-
-  orderedDirs.forEach((dir, gi) => {
-    const dirTasks = data.filter(d => d.direction === dir);
-    if (!dirTasks.length) return;
-
-    const dirGroups = {releases:[],done:[],paused:[],partial:[]};
-    dirTasks.forEach(d => dirGroups[categorize(d)].push(d));
-    const totalDir = dirTasks.length;
-    const doneCount = dirGroups.done.length + dirGroups.releases.length;
-
-    html += `<div class="dir-block" id="dirblock-${gi}">
-      <div class="dir-block-header" onclick="toggleDir('dirblock-${gi}')">
-        <div class="dir-block-arrow" id="dirarrow-${gi}">▾</div>
-        <div class="dir-block-name">${esc(dir||'Без направления')}</div>
-        <div class="dir-block-stats">
-          ${dirGroups.releases.length ? `<span class="dstat dstat-rel">🚀 ${dirGroups.releases.length}</span>` : ''}
-          ${dirGroups.done.length ? `<span class="dstat dstat-done">✅ ${dirGroups.done.length}</span>` : ''}
-          ${dirGroups.partial.length ? `<span class="dstat dstat-part">🔄 ${dirGroups.partial.length}</span>` : ''}
-        </div>
-        <div class="dir-block-total">${totalDir} задач</div>
-      </div>
-      <div class="dir-block-body" id="dirbody-${gi}">
-        <div class="dir-columns">`;
-
-    DISPLAY_ORDER.forEach(sec => {
-      const tasks = dirGroups[sec.key];
-      if (!tasks.length) return;
-      html += `<div class="dir-col">
-        <div class="dir-col-head ${sec.cls}">
-          <span>${sec.icon}</span>
-          <span class="dir-col-title">${sec.title}</span>
-          <span class="dir-col-count">${tasks.length}</span>
-        </div>`;
+  let colsHtml = '<div class="three-cols">';
+  DISPLAY_ORDER.forEach(sec => {
+    const tasks = groups[sec.key];
+    colsHtml += `<div class="three-col">
+      <div class="three-col-head ${sec.cls}">
+        <span>${sec.icon}</span>
+        <span class="three-col-title">${sec.title}</span>
+        <span class="three-col-count">${tasks.length}</span>
+      </div>`;
+    if (!tasks.length) {
+      colsHtml += `<div class="three-col-empty">Нет задач</div>`;
+    } else {
       tasks.forEach((t,i) => {
         const idx = allData.indexOf(t);
-        html += `<div class="task-card ${sec.cls}" style="animation-delay:${i*15}ms" onclick="openModal(${idx})">
+        colsHtml += `<div class="task-card ${sec.cls}" style="animation-delay:${i*12}ms" onclick="openModal(${idx})">
+          ${t.direction?`<span class="task-dir-tag">${esc(t.direction)}</span>`:''}
           <div class="task-epic">${esc(t.epic)||'—'}</div>
           <div class="task-meta">
             ${t.who?`<div class="meta-who"><div class="avatar">${esc(initials(t.who))}</div>${esc(t.who)}</div>`:''}
@@ -725,70 +729,27 @@ function renderAll(data) {
           ${t.victory?`<div class="victory-block">🏆 <span>${esc(t.victory)}</span></div>`:''}
         </div>`;
       });
-      html += '</div>';
-    });
-
-    html += `</div></div></div>`;
+    }
+    colsHtml += '</div>';
   });
-  html += '</div>';
+  colsHtml += '</div>';
 
-  // TOP-5 section (password protected)
-  html += `<div class="top5-section">
-    <div class="top5-header" onclick="toggleTop5()">
-      <span>🏅 ТОП-5 сотрудников</span>
-      <span class="top5-lock" id="top5Lock">🔒 Показать</span>
-    </div>
-    <div id="top5Body" style="display:none;">
-      <div id="top5PwdWrap" class="top5-pwd-wrap">
-        <input type="password" id="top5Pwd" placeholder="Введите пароль..." onkeydown="if(event.key==='Enter')checkTop5Pwd()" />
-        <button onclick="checkTop5Pwd()">Войти</button>
-        <span id="top5PwdErr" style="font-size:11px;color:var(--blocked);display:none;">Неверный пароль</span>
-      </div>
-      <div id="top5Content" style="display:none;"></div>
-    </div>
-  </div>`;
-
-  document.getElementById('app').innerHTML = html;
+  document.getElementById('app').innerHTML = chipsHtml + colsHtml;
 
   renderMissing(data);
   renderCopyBox(groups);
 }
 
-function toggleDir(id) {
-  const body = document.getElementById('dirbody-' + id.replace('dirblock-',''));
-  const arrow = document.getElementById('dirarrow-' + id.replace('dirblock-',''));
-  const gi = id.replace('dirblock-','');
-  const bodyEl = document.getElementById('dirbody-'+gi);
-  const arrowEl = document.getElementById('dirarrow-'+gi);
-  if (!bodyEl) return;
-  const collapsed = bodyEl.style.display === 'none';
-  bodyEl.style.display = collapsed ? 'block' : 'none';
-  arrowEl.style.transform = collapsed ? 'rotate(0deg)' : 'rotate(-90deg)';
-}
-
-let top5Unlocked = false;
-function toggleTop5() {
-  const body = document.getElementById('top5Body');
-  body.style.display = body.style.display === 'none' ? 'block' : 'none';
-  if (top5Unlocked) renderTop5();
-}
-
-function checkTop5Pwd() {
-  const val = document.getElementById('top5Pwd').value;
-  if (val === '31415') {
-    top5Unlocked = true;
-    document.getElementById('top5PwdWrap').style.display = 'none';
-    document.getElementById('top5Content').style.display = 'block';
-    document.getElementById('top5Lock').textContent = '🏅 Открыто';
-    renderTop5();
-  } else {
-    document.getElementById('top5PwdErr').style.display = 'inline';
-    setTimeout(()=>{ document.getElementById('top5PwdErr').style.display='none'; }, 2000);
-  }
+function setDirFilter(dir) {
+  window._selectedDir = dir;
+  // Update chips UI immediately
+  document.querySelectorAll('.dir-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (dir || 'Все'));
+  });
+  applyFilters();
 }
 
 function calcScore(tasks) {
-  // Releases=3, Done=2, Partial=1
   return tasks.reduce((sum, t) => {
     const cat = categorize(t);
     if (cat === 'releases') return sum + 3;
@@ -798,133 +759,77 @@ function calcScore(tasks) {
   }, 0);
 }
 
-function renderTop5() {
-  const el = document.getElementById('top5Content');
+function renderStaffTab() {
+  const el = document.getElementById('staffSection');
   if (!el) return;
 
-  // Current week/filter data
-  const dir = document.getElementById('filterDir').value;
-  const who = document.getElementById('filterWho').value;
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  let weekData = allData.filter(d => {
-    if (selectedWeek !== 'all') { const w = extractWeek(d); if (w !== selectedWeek) return false; }
-    if (dir && d.direction !== dir) return false;
-    if (q && ![d.direction,d.epic,d.who,d.status,d.victory,d.result].join(' ').toLowerCase().includes(q)) return false;
-    return true;
-  });
+  const allPeople = masterStaff.length ? masterStaff : unique(allData.map(d=>d.who).filter(Boolean));
+  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
 
-  // All-time (ignore week filter)
-  const allTimeData = allData;
-
-  function topList(dataset, label) {
+  function buildTop(dataset, limit) {
     const byWho = {};
     dataset.filter(d=>d.who).forEach(d => {
       if (!byWho[d.who]) byWho[d.who] = [];
       byWho[d.who].push(d);
     });
+    // Include all people from master list even if 0 tasks
+    allPeople.forEach(p => { if (!byWho[p]) byWho[p] = []; });
     return Object.entries(byWho)
       .map(([name, tasks]) => ({
         name,
         score: calcScore(tasks),
-        rel: tasks.filter(t=>categorize(t)==='releases').length,
+        rel:  tasks.filter(t=>categorize(t)==='releases').length,
         done: tasks.filter(t=>categorize(t)==='done').length,
         part: tasks.filter(t=>categorize(t)==='partial').length,
+        total: tasks.length,
       }))
-      .sort((a,b) => b.score - a.score)
-      .slice(0,5);
+      .sort((a,b) => b.score - a.score || a.name.localeCompare(b.name))
+      .slice(0, limit);
   }
 
-  const weekTop = topList(weekData, 'Неделя');
-  const allTop  = topList(allTimeData, 'Все время');
-
-  const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
-
-  function renderList(list, title) {
-    if (!list.length) return `<div style="font-size:13px;color:var(--muted);padding:1rem;">Нет данных</div>`;
-    return `<div class="top5-list-title">${title}</div>` +
-    list.map((p,i) => `<div class="top5-row">
-      <span class="top5-medal">${medals[i]}</span>
-      <span class="top5-name">${esc(p.name)}</span>
-      <span class="top5-chips">
-        ${p.rel?`<span class="top5-chip top5-chip-rel">🚀 ${p.rel}</span>`:''}
-        ${p.done?`<span class="top5-chip top5-chip-done">✅ ${p.done}</span>`:''}
-        ${p.part?`<span class="top5-chip top5-chip-part">🔄 ${p.part}</span>`:''}
-      </span>
-      <span class="top5-score">${p.score} <span style="font-size:10px;color:var(--muted);">очков</span></span>
-    </div>`).join('');
-  }
-
-  el.innerHTML = `
-    <div class="top5-hint">Баллы: 🚀 Релиз = 3 · ✅ Выполнено = 2 · 🔄 Промежуточные = 1</div>
-    <div class="top5-grid">
-      <div class="top5-col">${renderList(weekTop, selectedWeek==='all' ? '📅 Все время (текущий фильтр)' : `📅 Неделя ${weekLabel(selectedWeek)}`)}</div>
-      <div class="top5-col">${renderList(allTop, '🗓 За всё время')}</div>
-    </div>`;
-}
-
-function renderStaffTab() {
-  const el = document.getElementById('staffSection');
-  if (!el) return;
-
-  // Get current week filter
-  let weekData = allData.filter(d => {
+  // Current period data
+  let periodData = allData.filter(d => {
     if (selectedWeek !== 'all') { const w = extractWeek(d); return w === selectedWeek; }
     return true;
   });
 
-  // Build per-person stats for current week
-  const allPeople = masterStaff.length ? masterStaff : unique(allData.map(d=>d.who).filter(Boolean));
+  const periodTop = buildTop(periodData, 10);
+  const allTop    = buildTop(allData, 10);
 
-  const weekLabel_ = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : 'Все недели';
+  const periodLabel = selectedWeek !== 'all' ? `📅 Неделя ${weekLabel(selectedWeek)}` : '📅 Все недели';
 
-  const peopleStats = allPeople.map(name => {
-    const tasks = weekData.filter(d => d.who === name);
-    const rel  = tasks.filter(t => categorize(t) === 'releases').length;
-    const done = tasks.filter(t => categorize(t) === 'done').length;
-    const part = tasks.filter(t => categorize(t) === 'partial').length;
-    const score = rel*3 + done*2 + part*1;
-    const dirs = unique(tasks.map(t=>t.direction).filter(Boolean));
-    return { name, tasks: tasks.length, rel, done, part, score, dirs };
-  }).sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
-
-  const avatarColors = [
-    ['var(--release-tag-bg)','var(--release-tag)'],
-    ['var(--done-tag-bg)','var(--done-tag)'],
-    ['var(--partial-tag-bg)','var(--partial-tag)'],
-    ['var(--paused-tag-bg)','var(--paused-tag)'],
-  ];
-
-  let html = `<div class="staff-section">
-    <div class="staff-section-title">👤 Сотрудники</div>
-    <div class="staff-section-sub">${weekLabel_} · ${peopleStats.filter(p=>p.tasks>0).length} из ${allPeople.length} сотрудников активны</div>
-    <div class="staff-grid">`;
-
-  peopleStats.forEach((p, i) => {
-    const [bg, fg] = avatarColors[i % avatarColors.length];
-    html += `<div class="staff-card">
-      <div class="staff-card-top">
-        <div class="staff-avatar-lg" style="background:${bg};color:${fg};">${esc(initials(p.name))}</div>
-        <div>
-          <div class="staff-name">${esc(p.name)}</div>
-          ${p.dirs.length ? `<div style="font-size:11px;color:var(--muted);">${p.dirs.slice(0,2).map(esc).join(', ')}${p.dirs.length>2?` +${p.dirs.length-2}`:''}</div>` : ''}
+  function renderRow(p, i) {
+    return `<div class="staff-top-row">
+      <span class="staff-top-medal">${medals[i]}</span>
+      <div class="staff-top-info">
+        <div class="staff-top-name">${esc(p.name)}</div>
+        <div class="staff-top-chips">
+          ${p.rel  ? `<span class="staff-chip staff-chip-rel">🚀 ${p.rel}</span>` : ''}
+          ${p.done ? `<span class="staff-chip staff-chip-done">✅ ${p.done}</span>` : ''}
+          ${p.part ? `<span class="staff-chip staff-chip-part">🔄 ${p.part}</span>` : ''}
+          ${!p.total ? `<span style="font-size:11px;color:var(--muted);font-style:italic;">нет задач</span>` : ''}
         </div>
-      </div>`;
-
-    if (p.tasks > 0) {
-      html += `<div class="staff-chips">
-        ${p.rel  ? `<span class="staff-chip staff-chip-rel">🚀 ${p.rel} релиз${p.rel>1?'а':''}</span>` : ''}
-        ${p.done ? `<span class="staff-chip staff-chip-done">✅ ${p.done} выполн.</span>` : ''}
-        ${p.part ? `<span class="staff-chip staff-chip-part">🔄 ${p.part} в работе</span>` : ''}
       </div>
-      <div class="staff-score">Вклад: <strong>${p.score}</strong> очков · ${p.tasks} задач</div>`;
-    } else {
-      html += `<div class="staff-no-data">Нет задач за период</div>`;
-    }
-    html += `</div>`;
-  });
+      <div class="staff-top-score">
+        <span class="staff-top-pts">${p.score}</span>
+        <span class="staff-top-pts-label">очков</span>
+      </div>
+    </div>`;
+  }
 
-  html += `</div></div>`;
-  el.innerHTML = html;
+  el.innerHTML = `<div class="staff-section">
+    <div class="staff-top-hint">Баллы: 🚀 Релиз = 3 · ✅ Выполнено = 2 · 🔄 Промежуточные = 1</div>
+    <div class="staff-two-cols">
+      <div class="staff-col-block">
+        <div class="staff-col-title">${periodLabel}</div>
+        ${periodTop.map((p,i) => renderRow(p,i)).join('')}
+      </div>
+      <div class="staff-col-block">
+        <div class="staff-col-title">🗓 За всё время</div>
+        ${allTop.map((p,i) => renderRow(p,i)).join('')}
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderMissing(weekData) {
