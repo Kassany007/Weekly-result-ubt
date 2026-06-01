@@ -1001,20 +1001,33 @@ function renderCopyBox(groups) {
   const now = new Date();
   let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
-  const emojis = {done:'✅',releases:'🚀',paused:'⏸️',partial:'🔄'};
-  const titles = {done:'ВЫПОЛНЕННЫЕ ЗАДАЧИ',releases:'РЕЛИЗЫ',paused:'ПРИОСТАНОВЛЕННЫЕ ЗАДАЧИ',partial:'ЗАДАЧИ С ПРОМЕЖУТОЧНЫМИ РЕЗУЛЬТАТАМИ'};
+  // Separate "done" tasks into 3 buckets by direction keyword:
+  // 1. Обычные выполненные (не стратегия, не трансформация)
+  // 2. Стратегия БА (direction contains "стратег" or "AD НОС" or "стратег.бА")
+  // 3. Трансформация ТБ (direction contains "трансформ" or "Стрим ТБ")
+  const doneTasks = groups.done || [];
 
-  // Order: done first, then releases, then paused, then partial
-  const ORDER = ['done','releases','paused','partial'];
+  const isStrategy = d => {
+    const dir = (d.direction||'').toLowerCase().trim();
+    return dir === 'стратегия ба' || dir.startsWith('стратегия ба');
+  };
+  const isTransform = d => {
+    const dir = (d.direction||'').toLowerCase().trim();
+    return dir === 'трансформация тб' || dir.startsWith('трансформация тб');
+  };
 
-  let text = `📊 Результаты за неделю (${dateStr})\n`;
+  const doneRegular  = doneTasks.filter(d => !isStrategy(d) && !isTransform(d));
+  const doneStrategy = doneTasks.filter(d => isStrategy(d));
+  const doneTransform= doneTasks.filter(d => isTransform(d));
+  const releases     = groups.releases || [];
 
-  ORDER.forEach(key => {
-    const tasks = groups[key];
+  // Greeting
+  let text = `Всем привет! Это #EOW от ИИ-помощника 🤖\n\n`;
+  text += `📊 Результаты за неделю (${dateStr})\n`;
+
+  function addSection(emoji, title, tasks) {
     if (!tasks.length) return;
-    text += `\n${emojis[key]} ${titles[key]}\n`;
-
-    // Group by direction within section
+    text += `\n${emoji} ${title}\n`;
     const byDir = {};
     const dirOrder = [];
     tasks.forEach(t => {
@@ -1022,27 +1035,30 @@ function renderCopyBox(groups) {
       if (!byDir[d]) { byDir[d] = []; dirOrder.push(d); }
       byDir[d].push(t);
     });
-
     dirOrder.forEach(dir => {
       text += `\n*${dir}*\n`;
       byDir[dir].forEach(t => {
-        if (key === 'releases') {
-          // For releases: epic name, then victory text, then responsible
+        if (title === 'РЕЛИЗЫ') {
           const who = t.who ? ` — ${t.who}` : '';
           text += `${t.epic || '—'}${who}\n`;
-          if (t.victory && t.victory.trim()) {
-            text += `  ${t.victory}\n`;
-          }
+          if (t.victory && t.victory.trim()) text += `  ${t.victory}\n`;
         } else {
-          // Epic name first, then victory text on next line if exists
           text += `${t.epic || '—'}\n`;
-          if (t.victory && t.victory.trim()) {
-            text += `  ${t.victory}\n`;
-          }
+          if (t.victory && t.victory.trim()) text += `  ${t.victory}\n`;
         }
       });
     });
-  });
+  }
+
+  addSection('✅', 'ВЫПОЛНЕННЫЕ ЗАДАЧИ', doneRegular);
+  addSection('📐', 'ЗАДАЧИ СТРАТЕГИИ БА', doneStrategy);
+  addSection('🏗', 'ЗАДАЧИ ТРАНСФОРМАЦИИ ТБ', doneTransform);
+  addSection('🚀', 'РЕЛИЗЫ', releases);
+
+  // Partial note
+  if ((groups.partial||[]).length > 0) {
+    text += `\n🔄 Промежуточные результаты доступны на единой доске итогов недели\n`;
+  }
 
   // Store raw text for AI processing
   window._rawReportText = text;
