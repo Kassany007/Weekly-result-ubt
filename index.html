@@ -1001,25 +1001,22 @@ function renderCopyBox(groups) {
   const now = new Date();
   let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
-  // Separate "done" tasks into 3 buckets by direction keyword:
-  // 1. Обычные выполненные (не стратегия, не трансформация)
-  // 2. Стратегия БА (direction contains "стратег" or "AD НОС" or "стратег.бА")
-  // 3. Трансформация ТБ (direction contains "трансформ" or "Стрим ТБ")
+  // Block definitions by direction
+  const BLOCK2_DIRS = ['стрим тб: обращения', 'проект единая форма ввода данных'];
+  const BLOCK3_DIRS = ['стратегия ба', 'стратегия ба: ии'];
+  const BLOCK4_DIRS = ['трансформация тб'];
+
+  const inBlock2 = d => BLOCK2_DIRS.includes((d.direction||'').toLowerCase().trim());
+  const inBlock3 = d => BLOCK3_DIRS.includes((d.direction||'').toLowerCase().trim());
+  const inBlock4 = d => BLOCK4_DIRS.includes((d.direction||'').toLowerCase().trim());
+
   const doneTasks = groups.done || [];
 
-  const isStrategy = d => {
-    const dir = (d.direction||'').toLowerCase().trim();
-    return dir === 'стратегия ба' || dir.startsWith('стратегия ба');
-  };
-  const isTransform = d => {
-    const dir = (d.direction||'').toLowerCase().trim();
-    return dir === 'трансформация тб' || dir.startsWith('трансформация тб');
-  };
-
-  const doneRegular  = doneTasks.filter(d => !isStrategy(d) && !isTransform(d));
-  const doneStrategy = doneTasks.filter(d => isStrategy(d));
-  const doneTransform= doneTasks.filter(d => isTransform(d));
-  const releases     = groups.releases || [];
+  const block1 = doneTasks.filter(d => !inBlock2(d) && !inBlock3(d) && !inBlock4(d));
+  const block2 = doneTasks.filter(d => inBlock2(d));
+  const block3 = doneTasks.filter(d => inBlock3(d));
+  const block4 = doneTasks.filter(d => inBlock4(d));
+  const releases = groups.releases || [];
 
   // Greeting
   let text = `Всем привет! Это #EOW от ИИ-помощника 🤖\n\n`;
@@ -1027,7 +1024,7 @@ function renderCopyBox(groups) {
 
   function addSection(emoji, title, tasks) {
     if (!tasks.length) return;
-    text += `\n${emoji} ${title}\n`;
+    text += `\n${emoji} **${title}**\n`;
     const byDir = {};
     const dirOrder = [];
     tasks.forEach(t => {
@@ -1050,9 +1047,32 @@ function renderCopyBox(groups) {
     });
   }
 
-  addSection('✅', 'ВЫПОЛНЕННЫЕ ЗАДАЧИ', doneRegular);
-  addSection('📐', 'ЗАДАЧИ СТРАТЕГИИ БА', doneStrategy);
-  addSection('🏗', 'ЗАДАЧИ ТРАНСФОРМАЦИИ ТБ', doneTransform);
+  addSection('✅', 'ЗАВЕРШЁННЫЕ ЗАДАЧИ', block1);
+
+  // Block 2: Проекты УБТ with two subcategories
+  if (block2.length) {
+    text += `\n📋 **ПРОЕКТЫ УБТ**\n`;
+    const subCats = {
+      'Стрим ТБ: Обращения': [],
+      'Проект Единая форма ввода данных': [],
+    };
+    block2.forEach(t => {
+      const dir = (t.direction||'').toLowerCase().trim();
+      if (dir === 'стрим тб: обращения') subCats['Стрим ТБ: Обращения'].push(t);
+      else subCats['Проект Единая форма ввода данных'].push(t);
+    });
+    Object.entries(subCats).forEach(([subTitle, tasks]) => {
+      if (!tasks.length) return;
+      text += `\n*${subTitle}*\n`;
+      tasks.forEach(t => {
+        text += `${t.epic || '—'}\n`;
+        if (t.victory && t.victory.trim()) text += `  ${t.victory}\n`;
+      });
+    });
+  }
+
+  addSection('📐', 'СТРАТЕГИЯ БА', block3);
+  addSection('🏗', 'ТРАНСФОРМАЦИЯ ТБ', block4);
   addSection('🚀', 'РЕЛИЗЫ', releases);
 
   // Partial note
