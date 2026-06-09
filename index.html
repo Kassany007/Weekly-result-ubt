@@ -1006,9 +1006,9 @@ function renderCopyBox(groups) {
   let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
   // Block definitions by direction
-  const BLOCK2_DIRS = ['стрим тб: обращения', 'проект единая форма ввода данных'];
-  const BLOCK3_DIRS = ['стратегия ба', 'стратегия ба: ии'];
-  const BLOCK4_DIRS = ['трансформация тб'];
+const BLOCK2_DIRS = ['стрим тб: обращения', 'проект единая форма ввода данных', 'проект: единая форма ввода данных'];
+const BLOCK3_DIRS = ['стратегия ба', 'стратегия ба: ии'];
+const BLOCK4_DIRS = ['трансформация тб'];
 
   const inBlock2 = d => BLOCK2_DIRS.includes((d.direction||'').toLowerCase().trim());
   const inBlock3 = d => BLOCK3_DIRS.includes((d.direction||'').toLowerCase().trim());
@@ -1024,7 +1024,6 @@ function renderCopyBox(groups) {
 
   // Greeting
   let text = `Всем привет! 🖼\n\n#EOW | Итоги недели (${dateStr})\n`;
-  text += `📊 Результаты за неделю (${dateStr})\n`;
 
   function addSection(emoji, title, tasks) {
     if (!tasks.length) return;
