@@ -570,13 +570,11 @@ function categorize(d) {
   const e = (d.epic||'').toLowerCase();
   const v = (d.victory||'').toLowerCase();
   if (s.includes('релиз')||s.includes('release')||e.includes('релиз')||e.includes('release')||v.includes('релиз')||v.includes('выведен в пром')||v.includes('вывод в пром')) return 'releases';
-  // остальное без изменений...;
   if (s.includes('пауз')||s.includes('приост')||s.includes('стоп')||s.includes('заморож')||s.includes('блок')||s.includes('block')) return 'paused';
   if (s === 'выполняется' || s.includes('выполняется') || s.includes('в процессе') || s.includes('работ')||s.includes('прогресс')||s.includes('in progress')||s.includes('промеж')||s.includes('частичн')) return 'partial';
   if (s.includes('готов')||s.includes('выполн')||s.includes('done')||s.includes('завер')||s.includes('complete')) return 'done';
   if (d.victory && d.victory.trim()) return 'partial';
   return 'done';
-
 
 }
 
@@ -618,7 +616,9 @@ function extractWeek(d) {
     if (!isNaN(day) && !isNaN(month)) {
       const date = new Date(year < 100 ? 2000+year : year, month-1, day);
       const mon = new Date(date);
-      mon.setDate(date.getDate() - ((date.getDay()+6)%7));
+      const dow = date.getDay();
+      const diff = (dow === 0) ? -6 : 1 - dow;
+      mon.setDate(date.getDate() + diff);
       return mon.toISOString().slice(0,10);
     }
   }
@@ -1173,6 +1173,23 @@ const SYSTEM_PROMPT = `Ты редактор еженедельного отчё
 11. ВАЖНО для релизов: если в любом пункте любого раздела встречается слово «релиз», «выведен в пром», «вывод в пром» — это ВСЕГДА раздел 4, не раздел 1, 2 или 3. Перенеси такой пункт в релизы с форматом:
 👏🏻[Направление]. [Имя из поля «кто делает»]
 [Описание что изменилось и эффект]
+12. Используй эмодзи СТРОГО как в структуре:
+   — 1️⃣ 2️⃣ 3️⃣ 4️⃣ для номеров разделов
+   - 📊 Результаты за неделю 
+   ✅ ЗАВЕРШЁННЫЕ ЗАДАЧИ
+   📋 ПРОЕКТЫ УБТ
+   📐 СТРАТЕГИЯ БА
+   🏗 ТРАНСФОРМАЦИЯ ТБ
+   🚀 РЕЛИЗЫ
+   — 🔹 для направлений
+   — ▪️ для пунктов
+   — 👏🏻 для релизов (без пробела после)
+   — НЕ используй ** для выделения, НЕ заменяй эмодзи на звёздочки
+13. Терминология для БТ (бизнес-требований):
+   — «провалидированы БТ» — когда БА проверил/проверила требования
+   — НЕ «согласованы БТ» — слово «согласованы» только для документов, которые проходят официальное согласование (РД, ВНД, служебные записки, макеты)
+   — Примеры: «Провалидированы БТ по передаче согласий клиентов», «Провалидированы БТ «Проверки БФМ»»
+   — НО: «Согласована служебная записка», «Согласованы макеты по сейфовым ячейкам»
 
 ПРИМЕРЫ ГОТОВЫХ СООБЩЕНИЙ (используй как эталон стиля и формата):
 
