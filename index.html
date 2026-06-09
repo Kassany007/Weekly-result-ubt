@@ -616,8 +616,8 @@ function extractWeek(d) {
     if (!isNaN(day) && !isNaN(month)) {
       const date = new Date(year < 100 ? 2000+year : year, month-1, day);
       const mon = new Date(date);
-      const dow = date.getDay(); // 0=вс, 1=пн, ..., 6=сб
-      const diff = dow === 0 ? -6 : 1 - dow; // если вс — откатываемся на 6 дней назад к пн
+      const dow = date.getDay();
+      const diff = dow === 0 ? -6 : 1 - dow;
       mon.setDate(date.getDate() + diff);
       return mon.toISOString().slice(0,10);
     }
@@ -1014,7 +1014,7 @@ function renderCopyBox(groups) {
   const inBlock3 = d => BLOCK3_DIRS.includes((d.direction||'').toLowerCase().trim());
   const inBlock4 = d => BLOCK4_DIRS.includes((d.direction||'').toLowerCase().trim());
 
-  const doneTasks = groups.done || [];
+  const doneTasks = [...(groups.done || []), ...(groups.partial || [])];
 
   const block1 = doneTasks.filter(d => !inBlock2(d) && !inBlock3(d) && !inBlock4(d));
   const block2 = doneTasks.filter(d => inBlock2(d));
