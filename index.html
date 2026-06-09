@@ -625,7 +625,7 @@ function extractWeek(d) {
   return null;
 }
   
-function weekLabel(iso) {
+  function weekLabel(iso) {
   const d = new Date(iso);
   const end = new Date(d); end.setDate(d.getDate()+6);
   return d.toLocaleDateString('ru',{day:'numeric',month:'short'}) + ' – ' + end.toLocaleDateString('ru',{day:'numeric',month:'short'});
