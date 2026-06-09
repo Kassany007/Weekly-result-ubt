@@ -616,15 +616,15 @@ function extractWeek(d) {
     if (!isNaN(day) && !isNaN(month)) {
       const date = new Date(year < 100 ? 2000+year : year, month-1, day);
       const mon = new Date(date);
-      const dow = date.getDay();
-      const diff = (dow === 0) ? -6 : 1 - dow;
+      const dow = date.getDay(); // 0=вс, 1=пн, ..., 6=сб
+      const diff = dow === 0 ? -6 : 1 - dow; // если вс — откатываемся на 6 дней назад к пн
       mon.setDate(date.getDate() + diff);
       return mon.toISOString().slice(0,10);
     }
   }
   return null;
 }
-
+  
 function weekLabel(iso) {
   const d = new Date(iso);
   const end = new Date(d); end.setDate(d.getDate()+6);
