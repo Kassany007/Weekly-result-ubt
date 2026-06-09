@@ -568,12 +568,16 @@ const SECTIONS = [
 function categorize(d) {
   const s = (d.status||'').toLowerCase().trim();
   const e = (d.epic||'').toLowerCase();
-  if (s.includes('релиз')||s.includes('release')||e.includes('релиз')||e.includes('release')) return 'releases';
+  const v = (d.victory||'').toLowerCase();
+  if (s.includes('релиз')||s.includes('release')||e.includes('релиз')||e.includes('release')||v.includes('релиз')||v.includes('выведен в пром')||v.includes('вывод в пром')) return 'releases';
+  // остальное без изменений...;
   if (s.includes('пауз')||s.includes('приост')||s.includes('стоп')||s.includes('заморож')||s.includes('блок')||s.includes('block')) return 'paused';
   if (s === 'выполняется' || s.includes('выполняется') || s.includes('в процессе') || s.includes('работ')||s.includes('прогресс')||s.includes('in progress')||s.includes('промеж')||s.includes('частичн')) return 'partial';
   if (s.includes('готов')||s.includes('выполн')||s.includes('done')||s.includes('завер')||s.includes('complete')) return 'done';
   if (d.victory && d.victory.trim()) return 'partial';
   return 'done';
+
+
 }
 
 function parseCSV(text) {
@@ -1166,6 +1170,9 @@ const SYSTEM_PROMPT = `Ты редактор еженедельного отчё
    — промежуточные шаги: "направлен на проверку", "направлен на согласование", "выставлен на согласование" — это НЕ результат
    — подготовку к чему-либо без конкретного артефакта
    Включай только: согласован, утверждён, подписан, передан в разработку, завершено тестирование, получен ответ/данные.
+11. ВАЖНО для релизов: если в любом пункте любого раздела встречается слово «релиз», «выведен в пром», «вывод в пром» — это ВСЕГДА раздел 4, не раздел 1, 2 или 3. Перенеси такой пункт в релизы с форматом:
+👏🏻[Направление]. [Имя из поля «кто делает»]
+[Описание что изменилось и эффект]
 
 ПРИМЕРЫ ГОТОВЫХ СООБЩЕНИЙ (используй как эталон стиля и формата):
 
