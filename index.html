@@ -615,16 +615,20 @@ function extractWeek(d) {
       const date = new Date(year < 100 ? 2000+year : year, month-1, day);
       const mon = new Date(date);
       mon.setDate(date.getDate() - ((date.getDay()+6)%7));
-      return mon.toISOString().slice(0,10);
+      return `${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
     }
   }
   return null;
 }
 
 function weekLabel(iso) {
-  const d = new Date(iso);
-  const end = new Date(d); end.setDate(d.getDate()+6);
-  return d.toLocaleDateString('ru',{day:'numeric',month:'short'}) + ' – ' + end.toLocaleDateString('ru',{day:'numeric',month:'short'});
+  const parts = iso.split('-');
+  const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  const end = new Date(d);
+  end.setDate(d.getDate()+6);
+  return d.toLocaleDateString('ru',{day:'numeric',month:'short'})
+    + ' – '
+    + end.toLocaleDateString('ru',{day:'numeric',month:'short'});
 }
 
 async function init() {
