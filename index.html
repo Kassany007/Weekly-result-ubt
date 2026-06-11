@@ -1005,16 +1005,15 @@ function renderCopyBox(groups) {
   const now = new Date();
   let dateStr = selectedWeek !== 'all' ? `Неделя ${weekLabel(selectedWeek)}` : now.toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
 
-  // Block definitions by direction
-const BLOCK2_DIRS = ['стрим тб: обращения', 'проект единая форма ввода данных', 'проект: единая форма ввода данных'];
-const BLOCK3_DIRS = ['стратегия ба', 'стратегия ба: ии'];
-const BLOCK4_DIRS = ['трансформация тб'];
+  const BLOCK2_DIRS = ['стрим тб: обращения', 'проект единая форма ввода данных', 'проект: единая форма ввода данных'];
+  const BLOCK3_DIRS = ['стратегия ба', 'стратегия ба: ии'];
+  const BLOCK4_DIRS = ['трансформация тб'];
 
   const inBlock2 = d => BLOCK2_DIRS.includes((d.direction||'').toLowerCase().trim());
   const inBlock3 = d => BLOCK3_DIRS.includes((d.direction||'').toLowerCase().trim());
   const inBlock4 = d => BLOCK4_DIRS.includes((d.direction||'').toLowerCase().trim());
 
-  const doneTasks = [...(groups.done || []), ...(groups.partial || [])];
+  const doneTasks = groups.done || [];
 
   const block1 = doneTasks.filter(d => !inBlock2(d) && !inBlock3(d) && !inBlock4(d));
   const block2 = doneTasks.filter(d => inBlock2(d));
@@ -1022,7 +1021,6 @@ const BLOCK4_DIRS = ['трансформация тб'];
   const block4 = doneTasks.filter(d => inBlock4(d));
   const releases = groups.releases || [];
 
-  // Greeting
   let text = `Всем привет! 🖼\n\n#EOW | Итоги недели (${dateStr})\n`;
 
   function addSection(emoji, title, tasks) {
@@ -1052,7 +1050,6 @@ const BLOCK4_DIRS = ['трансформация тб'];
 
   addSection('✅', 'ЗАВЕРШЁННЫЕ ЗАДАЧИ', block1);
 
-  // Block 2: Проекты УБТ with two subcategories
   if (block2.length) {
     text += `\n📋 **ПРОЕКТЫ УБТ**\n`;
     const subCats = {
@@ -1078,12 +1075,10 @@ const BLOCK4_DIRS = ['трансформация тб'];
   addSection('🏗', 'ТРАНСФОРМАЦИЯ ТБ', block4);
   addSection('🚀', 'РЕЛИЗЫ', releases);
 
-  // Partial note
   if ((groups.partial||[]).length > 0) {
     text += `\n🔄 Промежуточные результаты доступны на единой доске итогов недели\n`;
   }
 
-  // Store raw text for AI processing
   window._rawReportText = text;
 
   document.getElementById('copySection').innerHTML=`
@@ -1109,7 +1104,7 @@ const BLOCK4_DIRS = ['трансформация тб'];
       <div class="copy-text" id="copyTextContent">${esc(text)}</div>
     </div>`;
 }
-
+  
 async function reformulateWithAI() {
   const raw = window._rawReportText;
   if (!raw) return;
